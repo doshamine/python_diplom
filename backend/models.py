@@ -3,7 +3,7 @@ from django.db import models
 
 class Shop(models.Model):
     name = models.CharField(max_length=50, verbose_name='name', unique=True)
-    url = models.URLField(verbose_name='url', unique=True, blank=True)
+    url = models.URLField(verbose_name='url', unique=True)
 
     class Meta:
         verbose_name = 'Shop'
@@ -11,7 +11,7 @@ class Shop(models.Model):
         ordering = ['name']
 
 class Category(models.Model):
-    name = models.CharField(max_length=50, verbose_name='name', unique=True)
+    name = models.CharField(max_length=50, verbose_name='name')
     shops = models.ManyToManyField(Shop, verbose_name='shops', related_name='categories')
 
     class Meta:
@@ -21,8 +21,8 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name='category', related_name='products', on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, verbose_name='name', unique=True)
-    model = models.CharField(max_length=50, verbose_name='model', unique=True)
+    name = models.CharField(max_length=100, verbose_name='name')
+    model = models.CharField(max_length=100, verbose_name='model')
     shops = models.ManyToManyField(Shop, verbose_name='shops', related_name='products', through='ProductInfo')
 
     class Meta:
@@ -31,8 +31,8 @@ class Product(models.Model):
         ordering = ['name']
 
 class ProductInfo(models.Model):
-    product = models.ForeignKey(Product, verbose_name='product', related_name='shops', on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='products', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, verbose_name='product', related_name='product_info', on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='product_info', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price')
     price_rrc = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price_rrc')
     quantity = models.IntegerField(verbose_name='quantity')
@@ -46,8 +46,8 @@ class Parameter(models.Model):
         ordering = ['name']
 
 class ProductParameter(models.Model):
-    product_info = models.ForeignKey(ProductInfo, verbose_name='product_info', related_name='parameters', on_delete=models.CASCADE)
-    parameter = models.ForeignKey(Parameter, verbose_name='parameter', related_name='products', on_delete=models.CASCADE)
+    product_info = models.ForeignKey(ProductInfo, verbose_name='product_info', related_name='product_parameters', on_delete=models.CASCADE)
+    parameter = models.ForeignKey(Parameter, verbose_name='parameter', related_name='product_parameters', on_delete=models.CASCADE)
     value = models.TextField(verbose_name='value')
 
 class OrderStatus(models.TextChoices):
@@ -76,9 +76,9 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, verbose_name='order', related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, verbose_name='product', related_name='orders', on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='orders', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, verbose_name='order', related_name='order_items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, verbose_name='product', related_name='order_items', on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField(verbose_name='quantity')
 
 class Contact(models.Model):

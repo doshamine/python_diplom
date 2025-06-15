@@ -5,7 +5,6 @@ from django.core.management import BaseCommand
 
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter
 
-
 class Command(BaseCommand):
     def add_arguments(self, parser):
         pass
@@ -16,31 +15,29 @@ class Command(BaseCommand):
                 data = yaml.safe_load(f)
             shop_num += 1
 
-            shop = Shop(name=data['shop'])
+            shop = Shop(name=data['shop'], url=data['url'])
             shop.save()
 
-            for category in data['categories']:
-                category = Category(id=category['id'], name=category['name'])
-                category.save()
+            for category_data in data['categories']:
+                category, _ = Category.objects.get_or_create(id=category_data['id'], name=category_data['name'])
                 category.shops.add(shop)
 
-            for product in data['products']:
-                category, _ = Category.objects.get_or_create(id=product['category'])
+            for product_data in data['products']:
+                category = Category.objects.get(id=product_data['category'])
                 product = Product(
-                    id=product['id'], name=product['name'],
-                    model=product['model'], category=category
+                    id=product_data['id'], name=product_data['name'],
+                    model=product_data['model'], category=category
                 )
                 product.save()
 
                 product_info = ProductInfo(
-                    shop=shop, product=product, price=product['price'],
-                    price_rrc=product['price_rrc'], quantity=product['quantity']
+                    shop=shop, product=product, price=product_data['price'],
+                    price_rrc=product_data['price_rrc'], quantity=product_data['quantity']
                 )
                 product_info.save()
 
-                for parameter, value in product['parameters'].items():
-                    parameter = Parameter(name=parameter)
-                    parameter.save()
+                for parameter_name, value in product_data['parameters'].items():
+                    parameter, _ = Parameter.objects.get_or_create(name=parameter_name)
 
                     product_parameter = ProductParameter(
                         product_info=product_info,
@@ -48,4 +45,3 @@ class Command(BaseCommand):
                         value=value
                     )
                     product_parameter.save()
-
