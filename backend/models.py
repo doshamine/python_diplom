@@ -1,4 +1,92 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 class Shop(models.Model):
-    name = models.CharField(max_length=50, verbose_name='shop', unique=True)
+    name = models.CharField(max_length=50, verbose_name='name', unique=True)
+    url = models.URLField(verbose_name='url', unique=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Shop'
+        verbose_name_plural = 'Shops'
+        ordering = ['name']
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, verbose_name='name', unique=True)
+    shops = models.ManyToManyField(Shop, verbose_name='shops', related_name='categories')
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+        ordering = ['name']
+
+class Product(models.Model):
+    category = models.ForeignKey(Category, verbose_name='category', related_name='products', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, verbose_name='name', unique=True)
+    model = models.CharField(max_length=50, verbose_name='model', unique=True)
+    shops = models.ManyToManyField(Shop, verbose_name='shops', related_name='products', through='ProductInfo')
+
+    class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+        ordering = ['name']
+
+class ProductInfo(models.Model):
+    product = models.ForeignKey(Product, verbose_name='product', related_name='shops', on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='products', on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price')
+    price_rrc = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price_rrc')
+    quantity = models.IntegerField(verbose_name='quantity')
+
+class Parameter(models.Model):
+    name = models.CharField(max_length=50, verbose_name='name', unique=True)
+
+    class Meta:
+        verbose_name = 'Parameter'
+        verbose_name_plural = 'Parameters'
+        ordering = ['name']
+
+class ProductParameter(models.Model):
+    product_info = models.ForeignKey(ProductInfo, verbose_name='product_info', related_name='parameters', on_delete=models.CASCADE)
+    parameter = models.ForeignKey(Parameter, verbose_name='parameter', related_name='products', on_delete=models.CASCADE)
+    value = models.TextField(verbose_name='value')
+
+class OrderStatus(models.TextChoices):
+    NEW = 'new', 'New'
+    PAID = 'paid', 'Paid'
+    SHIPPED = 'shipped', 'Shipped'
+    CANCELED = 'canceled', 'Canceled'
+
+class Order(models.Model):
+    user = models.ForeignKey(
+        User, verbose_name='user',
+        related_name='orders',
+        on_delete=models.CASCADE
+    )
+    dt = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=50, verbose_name='status',
+        choices=OrderStatus.choices,
+        default=OrderStatus.NEW
+    )
+
+    class Meta:
+        verbose_name = 'Order'
+        verbose_name_plural = 'Orders'
+        ordering = ['dt']
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, verbose_name='order', related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, verbose_name='product', related_name='orders', on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, verbose_name='shop', related_name='orders', on_delete=models.CASCADE)
+    quantity = models.IntegerField(verbose_name='quantity')
+
+class Contact(models.Model):
+    type = models.CharField(max_length=50, verbose_name='type', unique=True)
+    user = models.ForeignKey(User, verbose_name='user', related_name='contacts', on_delete=models.CASCADE)
+    value = models.TextField(verbose_name='value')
+
+    class Meta:
+        verbose_name = 'Contact'
+        verbose_name_plural = 'Contacts'
+        ordering = ['type']
