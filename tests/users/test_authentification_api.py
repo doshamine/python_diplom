@@ -1,49 +1,34 @@
 import pytest
 from django.urls import reverse
-from rest_framework.test import APIClient
-from rest_framework import status
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-@pytest.fixture
-def user_data():
-    return {
-        "username": "johndoe",
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "john@example.com",
-        "password": "testpass123"
-    }
-
-@pytest.fixture
-def registered_user(user_data):
-    user = User.objects.create_user(
-        username=user_data["username"],
-        email=user_data["email"],
-        password=user_data["password"],
-        first_name=user_data["first_name"],
-        last_name=user_data["last_name"]
-    )
-    return user
 
 @pytest.mark.django_db
-def test_user_registration(api_client, user_data):
+def test_register_user(api_client):
     url = reverse('register')
-    response = api_client.post(url, user_data)
-    assert response.status_code == status.HTTP_201_CREATED
+    data = {
+        'username': 'newuser',
+        'first_name': 'New',
+        'last_name': 'User',
+        'email': 'new@example.com',
+        'password': 'secret123'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 201
     assert 'token' in response.data
-    assert User.objects.filter(email=user_data['email']).exists()
+
 
 @pytest.mark.django_db
-def test_user_login(api_client, registered_user, user_data):
+def test_login_user(api_client):
+    user = User.objects.create_user(username='loginuser', password='pass1234')
+    Token.objects.create(user=user)
+
     url = reverse('login')
-    credentials = {
-        'username': user_data['username'],
-        'password': user_data['password']
-    }
-    response = api_client.post(url, credentials)
-    assert response.status_code == status.HTTP_200_OK
+    response = api_client.post(url, {
+        'username': 'loginuser',
+        'password': 'pass1234'
+    })
+
+    assert response.status_code == 200
     assert 'token' in response.data

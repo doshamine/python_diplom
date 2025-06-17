@@ -19,15 +19,18 @@ from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 
-from backend.views import RegisterView, ProductViewSet
+from backend.views import RegisterView, ProductViewSet, OrderViewSet, ContactViewSet, OrderConfirmAPIView, CartAPIView
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='products')
+router.register(r'orders', OrderViewSet, basename='orders')
+router.register(r'contacts', ContactViewSet, basename='contacts')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/register/', RegisterView.as_view(), name='register'),
     path('api/v1/login/', obtain_auth_token, name='login'),
-
+    path('api/v1/confirm/', OrderConfirmAPIView.as_view(), name='confirm'),
+    path('cart/', CartAPIView.as_view(), name='cart'),
     path('api/v1/', include(router.urls))
 ]

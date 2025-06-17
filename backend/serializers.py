@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from backend.models import Product, Shop, ProductInfo
+from backend.models import Product, Shop, ProductInfo, OrderItem, Order, Contact
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,3 +41,28 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'model', 'product_info']
 
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product', 'shop', 'quantity']
+
+class OrderSerializer(serializers.ModelSerializer):
+    order_items = OrderItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'dt', 'status', 'order_items']
+        read_only_fields = ['user', 'dt']
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('order_items')
+        order = Order.objects.create(**validated_data)
+        for item in items_data:
+            OrderItem.objects.create(order=order, **item)
+        return order
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ['id', 'type', 'value']
