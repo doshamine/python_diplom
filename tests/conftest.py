@@ -21,7 +21,10 @@ def auth_client(api_client, user):
 
 @pytest.fixture
 def product():
-    return baker.make('backend.Product')
+    product = baker.make('backend.Product')
+    shop = baker.make('backend.Shop')
+    baker.make('backend.ProductInfo', product=product, shop=shop, price=100)
+    return product
 
 @pytest.fixture
 def shop():

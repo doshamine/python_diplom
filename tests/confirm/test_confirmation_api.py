@@ -59,3 +59,58 @@ def test_confirm_order_contact_not_found(auth_client, user):
 
     assert response.status_code == 404
     assert response.data['error'] == 'Contact not found.'
+
+@pytest.mark.django_db
+def test_confirm_order_unauthorized(api_client, user):
+    order = baker.make(Order, user=user, status=OrderStatus.NEW)
+    contact = baker.make(Contact, user=user)
+    response = api_client.post(reverse('confirm'), {
+        'order_id': order.id,
+        'contact_id': contact.id
+    })
+    assert response.status_code == 401
+
+@pytest.mark.django_db
+def test_confirm_order_missing_params(auth_client):
+    response = auth_client.post(reverse('confirm'), {})
+    assert response.status_code == 400
+    assert response.data['error'] == 'order_id and contact_id are required.'
+
+@pytest.mark.django_db
+def test_confirm_order_order_not_found(auth_client, user):
+    contact = baker.make(Contact, user=user)
+    response = auth_client.post(reverse('confirm'), {
+        'order_id': 9999,
+        'contact_id': contact.id
+    })
+    assert response.status_code == 404
+    assert response.data['error'] == 'Order not found.'
+
+@pytest.mark.django_db
+def test_confirm_order_contact_not_owned(auth_client, user):
+    order = baker.make(Order, user=user, status=OrderStatus.NEW)
+    other_contact = baker.make(Contact)  # контакт другого пользователя
+    response = auth_client.post(reverse('confirm'), {
+        'order_id': order.id,
+        'contact_id': other_contact.id
+    })
+    assert response.status_code == 404
+    assert response.data['error'] == 'Contact not found.'
+
+@pytest.mark.django_db
+def test_confirm_order_double_confirm(auth_client, user):
+    order = baker.make(Order, user=user, status=OrderStatus.NEW)
+    contact = baker.make(Contact, user=user)
+
+    response1 = auth_client.post(reverse('confirm'), {
+        'order_id': order.id,
+        'contact_id': contact.id
+    })
+
+    response2 = auth_client.post(reverse('confirm'), {
+        'order_id': order.id,
+        'contact_id': contact.id
+    })
+
+    assert response2.status_code == 400
+    assert response2.data['error'] == 'Only new orders can be confirmed.'

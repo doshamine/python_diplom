@@ -25,3 +25,53 @@ def test_cart_with_items(auth_client, user, product, shop):
     assert response.data['status'] == OrderStatus.NEW
     assert len(response.data['order_items']) == 1
     assert response.data['order_items'][0]['quantity'] == 2
+
+@pytest.mark.django_db
+def test_cart_with_multiple_items(auth_client, user, product, shop):
+    order = baker.make(Order, user=user, status=OrderStatus.NEW)
+    product2 = baker.make('backend.Product')
+    baker.make(OrderItem, order=order, product=product, shop=shop, quantity=2)
+    baker.make(OrderItem, order=order, product=product2, shop=shop, quantity=3)
+
+    url = reverse('cart')
+    response = auth_client.get(url)
+
+    assert response.status_code == 200
+    assert response.data['id'] == order.id
+    assert len(response.data['order_items']) == 2
+    quantities = [item['quantity'] for item in response.data['order_items']]
+    assert 2 in quantities and 3 in quantities
+
+@pytest.mark.django_db
+def test_cart_does_not_show_other_users_order(auth_client, user):
+    other_user = baker.make('auth.User')
+    order = baker.make(Order, user=other_user, status=OrderStatus.NEW)
+    url = reverse('cart')
+    response = auth_client.get(url)
+    assert response.status_code == 200
+    assert response.data['message'] == 'Cart is empty'
+
+@pytest.mark.django_db
+def test_cart_with_non_new_status(auth_client, user):
+    order = baker.make(Order, user=user, status=OrderStatus.PAID)
+    url = reverse('cart')
+    response = auth_client.get(url)
+    assert response.status_code == 200
+    assert response.data['message'] == 'Cart is empty'
+
+@pytest.mark.django_db
+def test_cart_server_error(monkeypatch, auth_client):
+    def raise_exception(*args, **kwargs):
+        raise Exception("Test error")
+    monkeypatch.setattr('backend.views.Order.objects.filter', raise_exception)
+    url = reverse('cart')
+    response = auth_client.get(url)
+    assert response.status_code == 500
+    assert 'error' in response.data
+
+@pytest.mark.django_db
+def test_cart_unauthorized(api_client):
+    url = reverse('cart')
+    response = api_client.get(url)
+    assert response.status_code == 401
+

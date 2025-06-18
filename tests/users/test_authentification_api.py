@@ -20,6 +20,49 @@ def test_register_user(api_client):
 
 
 @pytest.mark.django_db
+def test_register_user_duplicate_username(api_client):
+    User.objects.create_user(username='newuser', password='pass')
+    url = reverse('register')
+    data = {
+        'username': 'newuser',
+        'first_name': 'Another',
+        'last_name': 'User',
+        'email': 'another@example.com',
+        'password': 'secret123'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 400
+    assert 'username' in response.data
+
+
+@pytest.mark.django_db
+def test_register_user_invalid_data(api_client):
+    url = reverse('register')
+    data = {
+        'username': '',
+        'password': 'short'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 400
+    assert 'username' in response.data
+
+
+@pytest.mark.django_db
+def test_register_user_no_password(api_client):
+    url = reverse('register')
+    data = {
+        'username': 'nopass',
+        'first_name': 'No',
+        'last_name': 'Pass',
+        'email': 'nopass@example.com'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 400
+    assert 'password' in response.data
+
+
+
+@pytest.mark.django_db
 def test_login_user(api_client):
     user = User.objects.create_user(username='loginuser', password='pass1234')
     Token.objects.create(user=user)
@@ -32,3 +75,25 @@ def test_login_user(api_client):
 
     assert response.status_code == 200
     assert 'token' in response.data
+
+
+@pytest.mark.django_db
+def test_login_user_wrong_password(api_client):
+    User.objects.create_user(username='wrongpass', password='rightpass')
+    url = reverse('login')
+    response = api_client.post(url, {
+        'username': 'wrongpass',
+        'password': 'wrongpass'
+    })
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_login_user_not_found(api_client):
+    url = reverse('login')
+    response = api_client.post(url, {
+        'username': 'nouser',
+        'password': 'nopass'
+    })
+    assert response.status_code == 400
+

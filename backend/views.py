@@ -17,9 +17,12 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            try:
+                user = serializer.save()
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -59,12 +62,14 @@ class CartAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        order = Order.objects.filter(user=request.user, status=OrderStatus.NEW).first()
-        if not order:
-            return Response({'message': 'Cart is empty'}, status=200)
-
-        serializer = OrderSerializer(order)
-        return Response(serializer.data)
+        try:
+            order = Order.objects.filter(user=request.user, status=OrderStatus.NEW).first()
+            if not order:
+                return Response({'message': 'Cart is empty'}, status=200)
+            serializer = OrderSerializer(order)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class OrderConfirmAPIView(APIView):
