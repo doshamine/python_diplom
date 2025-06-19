@@ -9,7 +9,7 @@ def api_client():
 
 @pytest.fixture
 def user(db):
-    user = baker.make('auth.User', username='testuser')
+    user = baker.make('auth.User', username='testuser', email='mail@mail.com')
     Token.objects.get_or_create(user=user)
     return user
 

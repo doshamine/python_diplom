@@ -1,4 +1,5 @@
 import pytest
+from django.core import mail
 from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
@@ -97,3 +98,34 @@ def test_login_user_not_found(api_client):
     })
     assert response.status_code == 400
 
+
+@pytest.mark.django_db
+def test_register_user_sends_email(api_client):
+    url = reverse('register')
+    data = {
+        'username': 'mailuser',
+        'first_name': 'Mail',
+        'last_name': 'User',
+        'email': 'mailuser@example.com',
+        'password': 'secret123'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 201
+    assert len(mail.outbox) == 1
+    email = mail.outbox[0]
+    assert email.to == ['mailuser@example.com']
+    assert 'регистрация' in email.subject
+    assert 'Спасибо' in email.body
+
+
+@pytest.mark.django_db
+def test_register_user_no_email_sent_on_invalid_data(api_client):
+    url = reverse('register')
+    data = {
+        'username': '',
+        'email': 'fail@example.com',
+        'password': 'short'
+    }
+    response = api_client.post(url, data)
+    assert response.status_code == 400
+    assert len(mail.outbox) == 0

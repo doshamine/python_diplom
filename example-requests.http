@@ -1,0 +1,84 @@
+@BASE_URL = http://localhost:8000/api/v1
+
+POST {{BASE_URL}}/register/
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "first_name": "Иван",
+  "last_name": "Иванов",
+  "email": "sdmarch213@gmail.com",
+  "password": "password123"
+}
+
+###
+
+POST {{BASE_URL}}/register/
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "first_name": "Иван1",
+  "last_name": "Иванов1",
+  "email": "doshamine@gmail.com",
+  "password": "password123"
+}
+
+###
+
+POST {{BASE_URL}}/login/
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password123"
+}
+
+###
+
+GET {{BASE_URL}}/products/
+Content-Type: application/json
+Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+
+###
+
+POST {{BASE_URL}}/orders/
+Content-Type: application/json
+Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+
+{
+  "order_items": [
+    {
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+
+###
+
+POST {{BASE_URL}}/contacts/
+Content-Type: application/json
+Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+
+{
+  "type": "telegram",
+  "value": "doshamine"
+}
+
+###
+
+POST {{BASE_URL}}/contacts/
+Content-Type: application/json
+Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+
+{
+  "type": "address",
+  "value": "world"
+}

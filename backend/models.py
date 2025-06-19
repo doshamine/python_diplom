@@ -81,10 +81,18 @@ class OrderItem(models.Model):
     shop = models.ForeignKey(Shop, verbose_name='shop', related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField(verbose_name='quantity')
 
+
+class ContactType(models.TextChoices):
+    ADDRESS = 'address', 'адрес'
+    EMAIL = 'email', 'почта'
+    PHONE = 'phone', 'телефон'
+    TELEGRAM = 'telegram', 'телеграм'
+
+
 class Contact(models.Model):
-    type = models.CharField(max_length=50, verbose_name='type', unique=True)
+    type = models.CharField(max_length=50, verbose_name='type', choices=ContactType.choices)
     user = models.ForeignKey(User, verbose_name='user', related_name='contacts', on_delete=models.CASCADE)
-    value = models.TextField(verbose_name='value')
+    value = models.CharField(max_length=100, verbose_name='value')
 
     class Meta:
         verbose_name = 'Contact'

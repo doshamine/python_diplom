@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
@@ -7,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .filters import ProductFilter
-from .models import Product, Order, Contact, OrderStatus
+from .models import Product, Order, Contact, OrderStatus, ContactType
 from .serializers import UserSerializer, ProductSerializer, OrderSerializer, ContactSerializer
 
 
@@ -20,6 +22,15 @@ class RegisterView(APIView):
             try:
                 user = serializer.save()
                 token, created = Token.objects.get_or_create(user=user)
+
+                send_mail(
+                    subject='Успешная регистрация',
+                    message='Спасибо за регистрацию на нашем сайте!',
+                    from_email=None,
+                    recipient_list=[user.email],
+                    fail_silently=False
+                )
+
                 return Response({'token': token.key}, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -55,7 +66,15 @@ class ContactViewSet(viewsets.ModelViewSet):
         return Contact.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        contact = serializer.save(user=self.request.user)
+        if contact.type == ContactType.ADDRESS:
+            send_mail(
+                subject='Подтверждение адреса',
+                message=f'Ваш адрес "{contact.value}" был успешно добавлен.',
+                from_email=None,
+                recipient_list=[contact.user.email],
+                fail_silently=False,
+            )
 
 
 class CartAPIView(APIView):

@@ -31,6 +31,6 @@ urlpatterns = [
     path('api/v1/register/', RegisterView.as_view(), name='register'),
     path('api/v1/login/', obtain_auth_token, name='login'),
     path('api/v1/confirm/', OrderConfirmAPIView.as_view(), name='confirm'),
-    path('cart/', CartAPIView.as_view(), name='cart'),
+    path('api/v1/cart/', CartAPIView.as_view(), name='cart'),
     path('api/v1/', include(router.urls))
 ]
