@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,14 +29,16 @@ SECRET_KEY = 'django-insecure-9q^4d3e80s=j5ftof$v=e8*7e-+--vve=yd+im66+!&z9%#hh(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "doshamine@gmail.com"
-EMAIL_HOST_PASSWORD = "your_password"
-EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
-ALLOWED_HOSTS = []
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL").lower() in ("true", "1", "t")
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,11 +91,11 @@ WSGI_APPLICATION = 'orders.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'orders_db',
-        'HOST': 'localhost',
-        'PORT': 5431,
-        'USER': 'postgres',
-        'PASSWORD': '123',
+        'NAME': os.getenv('POSTGRES_DB', 'orders_db'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
+        'PORT': os.getenv('POSTGRES_PORT', 5432),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', '123'),
     }
 }
 
