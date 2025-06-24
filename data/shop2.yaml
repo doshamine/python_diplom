@@ -2,13 +2,13 @@ shop: Билайн
 url: https://shop.beeline.ru
 
 categories:
-  - id: 301
+  - id: 224
     name: Смартфоны
-  - id: 33
+  - id: 15
     name: Аксессуары
-  - id: 12
+  - id: 1
     name: Flash-накопители
-  - id: 8
+  - id: 5
     name: Телевизоры
 
 products:

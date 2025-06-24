@@ -21,6 +21,7 @@ class Command(BaseCommand):
             for category_data in data['categories']:
                 category, _ = Category.objects.get_or_create(id=category_data['id'], name=category_data['name'])
                 category.shops.add(shop)
+                category.save()
 
             for product_data in data['products']:
                 category = Category.objects.get(id=product_data['category'])

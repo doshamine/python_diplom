@@ -30,7 +30,7 @@ POST {{BASE_URL}}/login/
 Content-Type: application/json
 
 {
-  "username": "user1",
+  "username": "user2",
   "password": "password123"
 }
 
@@ -38,13 +38,13 @@ Content-Type: application/json
 
 GET {{BASE_URL}}/products/
 Content-Type: application/json
-Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+Authorization: Token 392701d568b1f01f0a4cc7e998c63c6716f30fa8
 
 ###
 
 POST {{BASE_URL}}/orders/
 Content-Type: application/json
-Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+Authorization: Token 39b1875386781b976e83ae749a73dd847b98c8c3
 
 {
   "order_items": [
@@ -65,7 +65,7 @@ Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
 
 {
   "type": "telegram",
@@ -76,9 +76,26 @@ Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token a27deb83fabc6d2b81f71505a5a1ef8bfc6aef92
+Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
 
 {
   "type": "address",
   "value": "world"
 }
+
+###
+
+POST {{BASE_URL}}/confirm/
+Content-Type: application/json
+Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
+
+{
+  "order_id": 1,
+  "contact_id": 2
+}
+
+###
+
+GET {{BASE_URL}}/orders/
+Content-Type: application/json
+Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682

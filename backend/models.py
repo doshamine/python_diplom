@@ -10,7 +10,11 @@ class Shop(models.Model):
         verbose_name_plural = 'Shops'
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
 class Category(models.Model):
+    id = models.BigIntegerField(verbose_name='id', primary_key=True)
     name = models.CharField(max_length=50, verbose_name='name')
     shops = models.ManyToManyField(Shop, verbose_name='shops', related_name='categories')
 
@@ -19,7 +23,11 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
+    id = models.BigIntegerField(verbose_name='id', primary_key=True)
     category = models.ForeignKey(Category, verbose_name='category', related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name='name')
     model = models.CharField(max_length=100, verbose_name='model')
@@ -29,6 +37,9 @@ class Product(models.Model):
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 class ProductInfo(models.Model):
     product = models.ForeignKey(Product, verbose_name='product', related_name='product_info', on_delete=models.CASCADE)
@@ -44,6 +55,9 @@ class Parameter(models.Model):
         verbose_name = 'Parameter'
         verbose_name_plural = 'Parameters'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 class ProductParameter(models.Model):
     product_info = models.ForeignKey(ProductInfo, verbose_name='product_info', related_name='product_parameters', on_delete=models.CASCADE)
