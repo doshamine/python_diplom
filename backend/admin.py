@@ -1,7 +1,12 @@
+import nested_admin
 from django.contrib import admin
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from django import forms
+
 from .models import (
     Shop, Category, Product, ProductInfo,
-    Parameter, ProductParameter, Order, OrderItem, Contact
+    Parameter, ProductParameter, Order, OrderItem, Contact, OrderStatus
 )
 
 @admin.register(Shop)
@@ -14,43 +19,91 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     search_fields = ("name",)
 
-class ProductInfoInline(admin.TabularInline):
-    model = ProductInfo
+class ProductParameterInline(nested_admin.NestedTabularInline):
+    model = ProductParameter
     extra = 1
 
+class ProductInfoInline(nested_admin.NestedTabularInline):
+    model = ProductInfo
+    extra = 1
+    inlines = [ProductParameterInline]
+
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(nested_admin.NestedModelAdmin):
     list_display = ("id", "name", "model", "category")
     search_fields = ("name", "model")
     list_filter = ("category",)
     inlines = [ProductInfoInline]
-
-@admin.register(ProductInfo)
-class ProductInfoAdmin(admin.ModelAdmin):
-    list_display = ("id", "product", "shop", "price", "price_rrc", "quantity")
-    list_filter = ("shop",)
-    search_fields = ("product__name",)
 
 @admin.register(Parameter)
 class ParameterAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     search_fields = ("name",)
 
-@admin.register(ProductParameter)
-class ProductParameterAdmin(admin.ModelAdmin):
-    list_display = ("id", "product_info", "parameter", "value")
-    search_fields = ("parameter__name", "value")
+
+class OrderItemForm(forms.ModelForm):
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        product = cleaned_data.get('product')
+        shop = cleaned_data.get('shop')
+        quantity = cleaned_data.get('quantity')
+
+        if product and shop and quantity is not None:
+            try:
+                product_info = ProductInfo.objects.get(product=product, shop=shop)
+            except ProductInfo.DoesNotExist:
+                raise ValidationError(
+                    f'Товар "{product}" отсутствует в магазине "{shop}".'
+                )
+            if quantity > product_info.quantity:
+                raise ValidationError(
+                    f'В наличии только {product_info.quantity} шт. товара "{product}" в магазине "{shop}".'
+                )
+        return cleaned_data
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    form = OrderItemForm
+    extra = 1
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "dt", "status")
     list_filter = ("status", "dt")
     search_fields = ("user__username",)
+    inlines = [OrderItemInline]
 
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "product", "shop", "quantity")
-    search_fields = ("order__id", "product__name")
+    def save_model(self, request, obj, form, change):
+        if obj.pk:
+            prev_status = Order.objects.get(pk=obj.pk).status
+        else:
+            prev_status = None
+        super().save_model(request, obj, form, change)
+
+        if prev_status != OrderStatus.PAID and obj.status == OrderStatus.PAID:
+            with transaction.atomic():
+                for item in obj.order_items.all():
+                    try:
+                        product_info = ProductInfo.objects.select_for_update().get(
+                            product=item.product,
+                            shop=item.shop
+                        )
+                    except ProductInfo.DoesNotExist:
+                        raise ValidationError(
+                            f'Товар "{item.product}" отсутствует в магазине "{item.shop}".'
+                        )
+                    if product_info.quantity < item.quantity:
+                        raise ValidationError(
+                            f'Недостаточно товара "{item.product}" в магазине "{item.shop}". В наличии: {product_info.quantity}.'
+                        )
+                    product_info.quantity -= item.quantity
+                    product_info.save()
+
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):

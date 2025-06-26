@@ -1,4 +1,5 @@
 shop: Билайн
+
 url: https://shop.beeline.ru
 
 categories:
@@ -12,8 +13,9 @@ categories:
     name: Телевизоры
 
 products:
+
   - id: 5000123
-    category: 301
+    category: 224
     model: samsung/galaxy-s21-ultra
     name: Смартфон Samsung Galaxy S21 Ultra 512GB (серый)
     price: 115000
@@ -24,20 +26,22 @@ products:
       "Разрешение (пикс)": 3200x1440
       "Встроенная память (Гб)": 512
       "Цвет": серый
-  - id: 5000144
-    category: 301
-    model: google/pixel-7
-    name: Смартфон Google Pixel 7 128GB (белый)
-    price: 70000
-    price_rrc: 74990
-    quantity: 6
+
+  - id: 4216313
+    category: 224
+    model: apple/iphone/xr
+    name: Смартфон Apple iPhone XR 256GB (красный)
+    price: 65000
+    price_rrc: 69990
+    quantity: 9
     parameters:
-      "Диагональ (дюйм)": 6.3
-      "Разрешение (пикс)": 2400x1080
-      "Встроенная память (Гб)": 128
-      "Цвет": белый
+      "Диагональ (дюйм)": 6.1
+      "Разрешение (пикс)": 1792x828
+      "Встроенная память (Гб)": 256
+      "Цвет": красный
+
   - id: 5000155
-    category: 301
+    category: 224
     model: realme/gt-neo
     name: Смартфон Realme GT Neo 256GB (фиолетовый)
     price: 52000
@@ -48,8 +52,9 @@ products:
       "Разрешение (пикс)": 2400x1080
       "Встроенная память (Гб)": 256
       "Цвет": фиолетовый
+
   - id: 6000101
-    category: 33
+    category: 15
     model: huawei/freebuds-pro
     name: Наушники Huawei FreeBuds Pro (черные)
     price: 12000
@@ -58,8 +63,9 @@ products:
     parameters:
       "Тип": беспроводные
       "Цвет": черный
+
   - id: 6000102
-    category: 33
+    category: 15
     model: sony/wh-1000xm4
     name: Наушники Sony WH-1000XM4 (серебристые)
     price: 25000
@@ -68,56 +74,61 @@ products:
     parameters:
       "Тип": беспроводные
       "Цвет": серебристый
+
   - id: 7000001
-    category: 12
+    category: 1
     model: samsung/bar-plus-128gb
     name: USB Flash Drive Samsung BAR Plus 128GB (серый)
     price: 2200
     price_rrc: 2590
     quantity: 15
     parameters:
-      "Capacity (GB)": 128
-      "Color": серый
+      "Встроенная память (Гб)": 128
+      "Цвет": серый
+
   - id: 7000002
-    category: 12
+    category: 1
     model: transcend/jetflash-64gb
     name: USB Flash Drive Transcend JetFlash 64GB (черный)
     price: 1400
     price_rrc: 1790
     quantity: 9
     parameters:
-      "Capacity (GB)": 64
-      "Color": черный
+      "Встроенная память (Гб)": 64
+      "Цвет": черный
+
   - id: 8000211
-    category: 8
+    category: 5
     model: hisense/u8g
     name: Hisense U8G 55" 4K Smart TV
     price: 900
     price_rrc: 999
     quantity: 6
     parameters:
-      "Screen Size (inches)": 55
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 55
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
+
   - id: 8000212
-    category: 8
+    category: 5
     model: philips/ambilight-70
     name: Philips Ambilight 70" 4K UHD Smart TV
     price: 1700
     price_rrc: 1899
     quantity: 3
     parameters:
-      "Screen Size (inches)": 70
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 70
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
+
   - id: 8000213
-    category: 8
+    category: 5
     model: sharp/aquos-60
     name: Sharp Aquos 60" 4K UHD Smart TV
     price: 1300
     price_rrc: 1490
     quantity: 7
     parameters:
-      "Screen Size (inches)": 60
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 60
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true

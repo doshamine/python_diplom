@@ -68,10 +68,10 @@ products:
     price_rrc: 84990
     quantity: 5
     parameters:
-      "Screen Size (inches)": 6.2
-      "Resolution (pixels)": 3200x1440
-      "Internal Memory (GB)": 128
-      "Color": black
+      "Диагональ (дюйм)": 6.2
+      "Разрешение (пикс)": 3200x1440
+      "Встроенная память (Гб)": 128
+      "Цвет": black
   - id: 1234568
     category: 15
     model: samsung/galaxy-note20
@@ -80,10 +80,10 @@ products:
     price_rrc: 99990
     quantity: 3
     parameters:
-      "Screen Size (inches)": 6.7
-      "Resolution (pixels)": 2400x1080
-      "Internal Memory (GB)": 256
-      "Color": mystic bronze
+      "Диагональ (дюйм)": 6.7
+      "Разрешение (пикс)": 2400x1080
+      "Встроенная память (Гб)": 256
+      "Цвет": mystic bronze
   - id: 1235464569
     category: 1
     model: sandisk/ultra-flair-64gb
@@ -92,8 +92,8 @@ products:
     price_rrc: 1990
     quantity: 10
     parameters:
-      "Capacity (GB)": 64
-      "Color": silver
+      "Встроенная память (Гб)": 64
+      "Цвет": silver
   - id: 1235434570
     category: 1
     model: kingston/datatraveler-32gb
@@ -102,8 +102,8 @@ products:
     price_rrc: 1290
     quantity: 8
     parameters:
-      "Capacity (GB)": 32
-      "Color": red
+      "Встроенная память (Гб)": 32
+      "Цвет": red
   - id: 123544571
     category: 224
     model: xiaomi/mi-10t-pro
@@ -112,10 +112,10 @@ products:
     price_rrc: 74990
     quantity: 6
     parameters:
-      "Screen Size (inches)": 6.67
-      "Resolution (pixels)": 2400x1080
-      "Internal Memory (GB)": 256
-      "Color": cosmic black
+      "Диагональ (дюйм)": 6.67
+      "Разрешение (пикс)": 2400x1080
+      "Встроенная память (Гб)": 256
+      "Цвет": cosmic black
   - id: 1234572
     category: 5
     model: samsung/qled-q90r
@@ -124,8 +124,8 @@ products:
     price_rrc: 2999
     quantity: 4
     parameters:
-      "Screen Size (inches)": 65
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 65
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
   - id: 123476573
     category: 5
@@ -135,8 +135,8 @@ products:
     price_rrc: 1999
     quantity: 7
     parameters:
-      "Screen Size (inches)": 55
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 55
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
   - id: 1234453574
     category: 5
@@ -146,8 +146,8 @@ products:
     price_rrc: 3499
     quantity: 3
     parameters:
-      "Screen Size (inches)": 75
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 75
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
   - id: 123234575
     category: 5
@@ -157,8 +157,8 @@ products:
     price_rrc: 799
     quantity: 10
     parameters:
-      "Screen Size (inches)": 55
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 55
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true
   - id: 123424576
     category: 5
@@ -168,6 +168,6 @@ products:
     price_rrc: 1299
     quantity: 5
     parameters:
-      "Screen Size (inches)": 65
-      "Resolution (pixels)": 3840x2160
+      "Диагональ (дюйм)": 65
+      "Разрешение (пикс)": 3840x2160
       "Smart TV": true

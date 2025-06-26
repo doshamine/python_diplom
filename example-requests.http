@@ -38,13 +38,13 @@ Content-Type: application/json
 
 GET {{BASE_URL}}/products/
 Content-Type: application/json
-Authorization: Token 392701d568b1f01f0a4cc7e998c63c6716f30fa8
+Authorization: Token 3a332e5268ed86c06ff5e1c9ec8a7f4320aa5ac0
 
 ###
 
 POST {{BASE_URL}}/orders/
 Content-Type: application/json
-Authorization: Token 39b1875386781b976e83ae749a73dd847b98c8c3
+Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 {
   "order_items": [
@@ -65,7 +65,7 @@ Authorization: Token 39b1875386781b976e83ae749a73dd847b98c8c3
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
+Authorization: Token 8b62e9e08c4c639ff2f4fd5de7cb6f8e3eecb15a
 
 {
   "type": "telegram",
@@ -76,7 +76,7 @@ Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
+Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 {
   "type": "address",
@@ -87,15 +87,15 @@ Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
 
 POST {{BASE_URL}}/confirm/
 Content-Type: application/json
-Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
+Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 {
   "order_id": 1,
-  "contact_id": 2
+  "contact_id": 1
 }
 
 ###
 
 GET {{BASE_URL}}/orders/
 Content-Type: application/json
-Authorization: Token fe1a6a4de22e38f60013c915ae6c095fdf18e682
+Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c

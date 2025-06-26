@@ -47,6 +47,23 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['id', 'product', 'shop', 'quantity']
 
+    def validate(self, data):
+        product = data.get('product')
+        shop = data.get('shop')
+        quantity = data.get('quantity')
+
+        try:
+            product_info = ProductInfo.objects.get(product=product, shop=shop)
+        except ProductInfo.DoesNotExist:
+            raise serializers.ValidationError(
+                f'Товар "{product}" отсутствует в магазине "{shop}".'
+            )
+
+        if quantity > product_info.quantity:
+            raise serializers.ValidationError(
+                f'Недостаточно товара "{product}" в магазине "{shop}". В наличии: {product_info.quantity}.'
+            )
+
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True)
 
@@ -61,6 +78,7 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in items_data:
             OrderItem.objects.create(order=order, **item)
         return order
+    
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:

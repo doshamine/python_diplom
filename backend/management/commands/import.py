@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
             for product_data in data['products']:
                 category = Category.objects.get(id=product_data['category'])
-                product = Product(
+                product, _ = Product.objects.get_or_create(
                     id=product_data['id'], name=product_data['name'],
                     model=product_data['model'], category=category
                 )

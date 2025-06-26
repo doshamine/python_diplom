@@ -32,5 +32,6 @@ urlpatterns = [
     path('api/v1/login/', obtain_auth_token, name='login'),
     path('api/v1/confirm/', OrderConfirmAPIView.as_view(), name='confirm'),
     path('api/v1/cart/', CartAPIView.as_view(), name='cart'),
+    path('_nested_admin/', include('nested_admin.urls')),
     path('api/v1/', include(router.urls))
 ]
