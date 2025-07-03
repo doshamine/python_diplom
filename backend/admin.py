@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django import forms
+from django.forms import BaseInlineFormSet
 
 from .models import (
     Shop, Category, Product, ProductInfo,
@@ -66,9 +67,24 @@ class OrderItemForm(forms.ModelForm):
         return cleaned_data
 
 
+class OrderItemFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        seen = set()
+        for form in self.forms:
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                product = form.cleaned_data.get('product')
+                shop = form.cleaned_data.get('shop')
+                key = (product, shop)
+                if key in seen:
+                    raise ValidationError('Нельзя добавлять несколько позиций с одинаковыми товаром и магазином в одном заказе.')
+                seen.add(key)
+
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     form = OrderItemForm
+    formset = OrderItemFormSet
     extra = 1
 
 @admin.register(Order)

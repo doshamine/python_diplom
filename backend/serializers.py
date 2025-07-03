@@ -78,6 +78,18 @@ class OrderSerializer(serializers.ModelSerializer):
         for item in items_data:
             OrderItem.objects.create(order=order, **item)
         return order
+
+    def validate(self, data):
+        seen = set()
+        for item in data.get('order_items', []):
+            key = (item['product'].id if hasattr(item['product'], 'id') else item['product'],
+                   item['shop'].id if hasattr(item['shop'], 'id') else item['shop'])
+            if key in seen:
+                raise serializers.ValidationError(
+                    'Нельзя добавлять несколько позиций с одинаковыми товаром и магазином в одном заказе.'
+                )
+            seen.add(key)
+        return data
     
 
 class ContactSerializer(serializers.ModelSerializer):

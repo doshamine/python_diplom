@@ -19,3 +19,5 @@ services:
       - postgres
     networks:
       - backend
+    environment:
+      - PYTHONUNBUFFERED=1
