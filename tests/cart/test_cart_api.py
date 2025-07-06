@@ -101,7 +101,7 @@ def test_cart_unauthorized(api_client):
 
 @pytest.mark.django_db
 def test_cart_add_item_with_insufficient_stock(auth_client, user, product, shop):
-    ProductInfo.objects.filter(product=product, shop=shop).update(quantity=1)
+    product_info = baker.make(ProductInfo, product=product, shop=shop, quantity=1)
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
 
     data = {
@@ -109,20 +109,22 @@ def test_cart_add_item_with_insufficient_stock(auth_client, user, product, shop)
             {"product": product.id, "shop": shop.id, "quantity": 2}
         ]
     }
-    url = reverse('order-list')
+    url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
     assert 'Недостаточно товара' in str(response.data)
 
 @pytest.mark.django_db
 def test_cart_duplicate_order_items_validation(auth_client, user, product, shop):
+    product_info = baker.make(ProductInfo, product=product, shop=shop, quantity=3)
+
     data = {
         "order_items": [
             {"product": product.id, "shop": shop.id, "quantity": 1},
             {"product": product.id, "shop": shop.id, "quantity": 2}
         ]
     }
-    url = reverse('order-list')
+    url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
     assert 'Нельзя добавлять несколько позиций с одинаковыми товаром и магазином' in str(response.data)
@@ -131,7 +133,7 @@ def test_cart_duplicate_order_items_validation(auth_client, user, product, shop)
 def test_cart_serializer_error(auth_client, user):
 
     data = {"order_items": [{"product": None, "shop": None, "quantity": None}]}
-    url = reverse('order-list')
+    url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
     assert 'errors' in response.data or isinstance(response.data, dict)

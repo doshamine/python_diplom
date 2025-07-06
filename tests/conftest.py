@@ -2,6 +2,9 @@ import pytest
 from model_bakery import baker
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
+from orders.settings import DEFAULT_FROM_EMAIL
+
+pytest_plugins = ("celery.contrib.pytest",)
 
 @pytest.fixture
 def api_client():
@@ -9,7 +12,7 @@ def api_client():
 
 @pytest.fixture
 def user(db):
-    user = baker.make('auth.User', username='testuser', email='mail@mail.com')
+    user = baker.make('auth.User', username='testuser', email=DEFAULT_FROM_EMAIL)
     Token.objects.get_or_create(user=user)
     return user
 

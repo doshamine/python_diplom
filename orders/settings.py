@@ -40,6 +40,8 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL").lower() in ("true", "1", "t")
 
 ALLOWED_HOSTS = ['*']
 
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_BACKEND_URL = os.getenv("CELERY_BACKEND_URL")
 
 # Application definition
 
@@ -71,7 +73,7 @@ ROOT_URLCONF = 'orders.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

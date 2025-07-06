@@ -64,6 +64,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 f'Недостаточно товара "{product}" в магазине "{shop}". В наличии: {product_info.quantity}.'
             )
 
+        return data
+
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True)
 

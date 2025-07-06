@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from model_bakery import baker
 
-from backend.models import Order, OrderItem, OrderStatus
+from backend.models import Order, OrderItem, OrderStatus, ProductInfo
 
 
 @pytest.mark.django_db
@@ -20,6 +20,7 @@ def test_order_list_unauthorized(api_client):
 
 @pytest.mark.django_db
 def test_order_create(auth_client, product, shop):
+    product_info = baker.make(ProductInfo, product=product, shop=shop, quantity=2)
     url = reverse('orders-list')
     payload = {
         "status": "new",

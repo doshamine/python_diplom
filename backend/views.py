@@ -1,5 +1,8 @@
 from django.conf import settings
-from django.core.mail import send_mail
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import redirect
+
+from .tasks import send_mail_task
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
@@ -11,7 +14,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .filters import ProductFilter
 from .models import Product, Order, Contact, OrderStatus, ContactType
 from .serializers import UserSerializer, ProductSerializer, OrderSerializer, ContactSerializer
+from .tasks import do_import
 
+@staff_member_required
+def import_view(request):
+    do_import.delay()
+    return redirect('/admin/')
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -23,12 +31,10 @@ class RegisterView(APIView):
                 user = serializer.save()
                 token, created = Token.objects.get_or_create(user=user)
 
-                send_mail(
+                send_mail_task.delay(
                     subject='Успешная регистрация',
                     message='Спасибо за регистрацию на нашем сайте!',
-                    from_email=None,
                     recipient_list=[user.email],
-                    fail_silently=False
                 )
 
                 return Response({'token': token.key}, status=status.HTTP_201_CREATED)
@@ -68,12 +74,10 @@ class ContactViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         contact = serializer.save(user=self.request.user)
         if contact.type == ContactType.ADDRESS:
-            send_mail(
+            send_mail_task.delay(
                 subject='Подтверждение адреса',
                 message=f'Ваш адрес "{contact.value}" был успешно добавлен.',
-                from_email=None,
                 recipient_list=[contact.user.email],
-                fail_silently=False,
             )
 
 

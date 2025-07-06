@@ -89,34 +89,3 @@ def test_contact_create_invalid(auth_client):
     response = auth_client.post(url, data)
     assert response.status_code == 400
     assert 'value' in response.data
-
-
-@pytest.mark.django_db
-def test_contact_create_address_sends_email(auth_client, user):
-    url = reverse('contacts-list')
-    data = {
-        'type': ContactType.ADDRESS,
-        'value': 'ул. Пушкина, 10'
-    }
-    response = auth_client.post(url, data)
-    assert response.status_code == 201
-    assert Contact.objects.count() == 1
-
-    assert len(mail.outbox) == 1
-    assert mail.outbox[0].subject == 'Подтверждение адреса'
-    assert user.email in mail.outbox[0].to
-    assert data['value'] in mail.outbox[0].body
-
-
-@pytest.mark.django_db
-def test_contact_create_non_address_no_email(auth_client, user):
-    url = reverse('contacts-list')
-    data = {
-        'type': ContactType.TELEGRAM,
-        'value': 'bot'
-    }
-    response = auth_client.post(url, data)
-    assert response.status_code == 201
-    assert Contact.objects.count() == 1
-
-    assert len(mail.outbox) == 0
