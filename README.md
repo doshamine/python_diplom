@@ -1,4 +1,4 @@
-# Документация Orders API
+# Orders API
 
 ## POST `/register/`
 
@@ -268,7 +268,7 @@ Content-Type: application/json
 ]
 ```
 
-## GET `/products/<int:product_id>`
+## GET `/products/{product_id}/`
 
 Получить информацию о продукте с данным id.
 
@@ -328,8 +328,453 @@ Content-Type: application/json
 }
 ```
 
+## POST `/orders/`
+
+Создать новый заказ.
+
+### Параметры запроса
+
+| Поле        | Тип      | Обязательный | Описание                                                 |
+|-------------|----------|--------------|----------------------------------------------------------|
+| status      | string   | да           | Статус заказа (`new`, `paid`, `shipped` или `canceled`)  |
+| order_items | массив   | да           | Список позиций заказа                                    |
+| order_items[].product | int | да      | ID продукта                                              |
+| order_items[].shop    | int | да      | ID магазина                                              |
+| order_items[].quantity| int | да      | Количество                                               |
+
+### Примеры возможных запросов и ответов
+
+#### 201 Created
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/orders/
+Authorization: Token <your_token>
+
+```
+{
+  "order_items": [
+    {
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+##### Ответ
+
+```
+{
+  "id": 1,
+  "user": 3,
+  "dt": "2025-07-07T12:59:49.297600Z",
+  "status": "new",
+  "order_items": [
+    {
+      "id": 1,
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "id": 2,
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+#### 400 Bad Request
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/orders/
+Authorization: Token <your_token>
+
+```
+{
+  "order_items": [
+    {
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+##### Ответ
+
+```
+{
+  "order_items": [
+    {
+      "product": [
+        "This field is required."
+      ]
+    },
+    {}
+  ]
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/orders/
+
+```
+{
+  "order_items": [
+    {
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
 ## GET `/orders/`
 
 Получить список заказов текущего пользователя.
 
-### Пример запроса
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+GET http://localhost:8000/api/v1/orders/
+Authorization: Token <your_token>
+
+##### Ответ
+
+```
+[
+  {
+    "id": 1,
+    "user": 3,
+    "dt": "2025-07-07T12:59:49.297600Z",
+    "status": "paid",
+    "order_items": [
+      {
+        "id": 1,
+        "product": 1235464569,
+        "shop": 1,
+        "quantity": 2
+      },
+      {
+        "id": 2,
+        "product": 5000123,
+        "shop": 2,
+        "quantity": 1
+      }
+    ]
+  }
+]
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+GET http://localhost:8000/api/v1/orders/
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+## GET `/orders/{order_id}/`
+
+Получить заказ пользователя по его id.
+
+### Параметры запроса
+
+| Параметр   | Тип    | Описание                                        |
+|------------|--------|-------------------------------------------------|
+| order_id   | int    | id заказа в базе                                |
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/orders/1
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "id": 1,
+  "user": 3,
+  "dt": "2025-07-07T12:59:49.297600Z",
+  "status": "paid",
+  "order_items": [
+    {
+      "id": 1,
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "id": 2,
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/orders/1/
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/orders/2/
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "detail": "No Order matches the given query."
+}
+```
+
+## PATCH `/orders/{order_id}/`
+
+Обновить статус заказа пользователя.
+
+### Параметры запроса
+
+| Поле        | Тип      | Обязательный | Описание                                                 |
+|-------------|----------|--------------|----------------------------------------------------------|
+| order_id    | int      | да           | id заказа в базе                                         |
+| status      | string   | да           | Статус заказа (`new`, `paid`, `shipped` или `canceled`)  |
+| order_items | массив   | да           | Список позиций заказа                                    |
+| order_items[].product | int | да      | ID продукта                                              |
+| order_items[].shop    | int | да      | ID магазина                                              |
+| order_items[].quantity| int | да      | Количество                                               |
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+```
+PATCH http://localhost:8000/api/v1/orders/1/
+Content-Type: application/json
+Authorization: Token <your_token>
+
+{
+  "status": "canceled"
+}
+```
+
+##### Ответ
+
+```
+{
+  "id": 1,
+  "user": 3,
+  "dt": "2025-07-07T12:59:49.297600Z",
+  "status": "canceled",
+  "order_items": [
+    {
+      "id": 1,
+      "product": 1235464569,
+      "shop": 1,
+      "quantity": 2
+    },
+    {
+      "id": 2,
+      "product": 5000123,
+      "shop": 2,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+#### 400 Bad Request
+
+##### Запрос
+
+```
+PATCH http://localhost:8000/api/v1/orders/1/
+Content-Type: application/json
+
+{
+  "status": "cancelled"
+}
+```
+
+##### Ответ
+
+```
+{
+  "status": [
+    "\"cancelled\" is not a valid choice."
+  ]
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+```
+PATCH http://localhost:8000/api/v1/orders/1/
+Content-Type: application/json
+
+{
+  "status": "canceled"
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+```
+PATCH http://localhost:8000/api/v1/orders/3/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+{
+  "status": "canceled"
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "No Order matches the given query."
+}
+```
+
+## DELETE `/orders/{order_id}/`
+
+Удалить заказ пользователя по его id.
+
+### Параметры запроса
+
+| Параметр   | Тип    | Описание                                        |
+|------------|--------|-------------------------------------------------|
+| order_id   | int    | id заказа в базе                                |
+
+### Примеры возможных запросов и ответов
+
+#### 204 No Content
+
+##### Запрос
+
+```
+DELETE http://localhost:8000/api/v1/orders/1/
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+```
+DELETE http://localhost:8000/api/v1/orders/1/
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+```
+DELETE http://localhost:8000/api/v1/orders/1/
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "detail": "No Order matches the given query."
+}
+```
+
