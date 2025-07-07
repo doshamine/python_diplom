@@ -11,7 +11,6 @@ def test_cart_empty(auth_client):
     assert response.status_code == 200
     assert response.data['message'] == 'Cart is empty'
 
-
 @pytest.mark.django_db
 def test_cart_with_items(auth_client, user, product, shop):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
@@ -26,7 +25,6 @@ def test_cart_with_items(auth_client, user, product, shop):
     assert len(response.data['order_items']) == 1
     assert response.data['order_items'][0]['quantity'] == 2
 
-
 @pytest.mark.django_db
 def test_cart_order_items_fields(auth_client, user, product, shop):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
@@ -38,7 +36,6 @@ def test_cart_order_items_fields(auth_client, user, product, shop):
     assert item['shop'] == shop.id
     assert item['quantity'] == 2
 
-
 @pytest.mark.parametrize("status", [OrderStatus.SHIPPED, OrderStatus.CANCELED])
 @pytest.mark.django_db
 def test_cart_with_non_new_statuses(auth_client, user, status):
@@ -47,7 +44,6 @@ def test_cart_with_non_new_statuses(auth_client, user, status):
     response = auth_client.get(url)
     assert response.status_code == 200
     assert response.data['message'] == 'Cart is empty'
-
 
 @pytest.mark.django_db
 def test_cart_with_multiple_items(auth_client, user, product, shop):
@@ -112,7 +108,7 @@ def test_cart_add_item_with_insufficient_stock(auth_client, user, product, shop)
     url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
-    assert 'Недостаточно товара' in str(response.data)
+    assert 'Only' in str(response.data)
 
 @pytest.mark.django_db
 def test_cart_duplicate_order_items_validation(auth_client, user, product, shop):
@@ -127,7 +123,7 @@ def test_cart_duplicate_order_items_validation(auth_client, user, product, shop)
     url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
-    assert 'Нельзя добавлять несколько позиций с одинаковыми товаром и магазином' in str(response.data)
+    assert 'You cannot add multiple items with the same product and store in one order.' in str(response.data)
 
 @pytest.mark.django_db
 def test_cart_serializer_error(auth_client, user):

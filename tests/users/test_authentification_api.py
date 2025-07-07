@@ -20,7 +20,6 @@ def test_register_user(api_client):
     assert response.status_code == 201
     assert 'token' in response.data
 
-
 @pytest.mark.django_db
 def test_register_user_duplicate_username(api_client):
     User.objects.create_user(username='newuser', password='pass')
@@ -36,7 +35,6 @@ def test_register_user_duplicate_username(api_client):
     assert response.status_code == 400
     assert 'username' in response.data
 
-
 @pytest.mark.django_db
 def test_register_user_invalid_data(api_client):
     url = reverse('register')
@@ -47,7 +45,6 @@ def test_register_user_invalid_data(api_client):
     response = api_client.post(url, data)
     assert response.status_code == 400
     assert 'username' in response.data
-
 
 @pytest.mark.django_db
 def test_register_user_no_password(api_client):
@@ -61,8 +58,6 @@ def test_register_user_no_password(api_client):
     response = api_client.post(url, data)
     assert response.status_code == 400
     assert 'password' in response.data
-
-
 
 @pytest.mark.django_db
 def test_login_user(api_client):
@@ -78,7 +73,6 @@ def test_login_user(api_client):
     assert response.status_code == 200
     assert 'token' in response.data
 
-
 @pytest.mark.django_db
 def test_login_user_wrong_password(api_client):
     User.objects.create_user(username='wrongpass', password='rightpass')
@@ -88,7 +82,6 @@ def test_login_user_wrong_password(api_client):
         'password': 'wrongpass'
     })
     assert response.status_code == 400
-
 
 @pytest.mark.django_db
 def test_login_user_not_found(api_client):

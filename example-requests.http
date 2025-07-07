@@ -1,27 +1,16 @@
 @BASE_URL = http://localhost:8000/api/v1
+@TOKEN = 6276731a2d476223b786bc92846a640cecd39319
+
 
 POST {{BASE_URL}}/register/
 Content-Type: application/json
 
 {
-  "username": "user1",
+  "username": "doshamine",
   "first_name": "Иван",
   "last_name": "Иванов",
-  "email": "sdmarch213@gmail.com",
-  "password": "password123"
-}
-
-###
-
-POST {{BASE_URL}}/register/
-Content-Type: application/json
-
-{
-  "username": "user2",
-  "first_name": "Иван1",
-  "last_name": "Иванов1",
   "email": "doshamine@gmail.com",
-  "password": "password123"
+  "password": "123"
 }
 
 ###
@@ -30,21 +19,37 @@ POST {{BASE_URL}}/login/
 Content-Type: application/json
 
 {
-  "username": "user2",
-  "password": "password123"
+  "username": "doshamine",
+  "password": "123"
 }
 
 ###
 
-GET {{BASE_URL}}/products/
+GET {{BASE_URL}}/products/?shop_id=1&max_price=1000
 Content-Type: application/json
-Authorization: Token 3a332e5268ed86c06ff5e1c9ec8a7f4320aa5ac0
+Authorization: Token {{TOKEN}}
+
+###
+
+DELETE {{BASE_URL}}/orders/1/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+###
+
+PATCH {{BASE_URL}}/orders/1/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+{
+  "status": "cancelled"
+}
 
 ###
 
 POST {{BASE_URL}}/orders/
 Content-Type: application/json
-Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
+Authorization: Token {{TOKEN}}
 
 {
   "order_items": [
@@ -65,7 +70,7 @@ Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token 8b62e9e08c4c639ff2f4fd5de7cb6f8e3eecb15a
+Authorization: Token {{TOKEN}}
 
 {
   "type": "telegram",
@@ -76,7 +81,7 @@ Authorization: Token 8b62e9e08c4c639ff2f4fd5de7cb6f8e3eecb15a
 
 POST {{BASE_URL}}/contacts/
 Content-Type: application/json
-Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
+Authorization: Token {{TOKEN}}
 
 {
   "type": "address",
@@ -87,7 +92,7 @@ Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 POST {{BASE_URL}}/confirm/
 Content-Type: application/json
-Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
+Authorization: Token {{TOKEN}}
 
 {
   "order_id": 1,
@@ -98,4 +103,4 @@ Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
 
 GET {{BASE_URL}}/orders/
 Content-Type: application/json
-Authorization: Token 159a35622c240a0052b168c692ab918be83a6f9c
+Authorization: Token {{TOKEN}}

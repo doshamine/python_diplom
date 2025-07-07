@@ -6,28 +6,33 @@ from django import forms
 from django.forms import BaseInlineFormSet
 
 from .models import (
-    Shop, Category, Product, ProductInfo,
-    Parameter, ProductParameter, Order, OrderItem, Contact, OrderStatus
+    Shop, Category, Product, ProductInfo, Parameter,
+    ProductParameter, Order, OrderItem, Contact, OrderStatus
 )
+
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "url")
     search_fields = ("name",)
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     search_fields = ("name",)
 
+
 class ProductParameterInline(nested_admin.NestedTabularInline):
     model = ProductParameter
     extra = 1
+
 
 class ProductInfoInline(nested_admin.NestedTabularInline):
     model = ProductInfo
     extra = 1
     inlines = [ProductParameterInline]
+
 
 @admin.register(Product)
 class ProductAdmin(nested_admin.NestedModelAdmin):
@@ -35,6 +40,7 @@ class ProductAdmin(nested_admin.NestedModelAdmin):
     search_fields = ("name", "model")
     list_filter = ("category",)
     inlines = [ProductInfoInline]
+
 
 @admin.register(Parameter)
 class ParameterAdmin(admin.ModelAdmin):
@@ -58,11 +64,11 @@ class OrderItemForm(forms.ModelForm):
                 product_info = ProductInfo.objects.get(product=product, shop=shop)
             except ProductInfo.DoesNotExist:
                 raise ValidationError(
-                    f'Товар "{product}" отсутствует в магазине "{shop}".'
+                    f'The product "{product}" is not available in the store "{shop}".'
                 )
             if quantity > product_info.quantity:
                 raise ValidationError(
-                    f'В наличии только {product_info.quantity} шт. товара "{product}" в магазине "{shop}".'
+                    f'Only {product_info.quantity} units of the product "{product}" are available in the store "{shop}".'
                 )
         return cleaned_data
 
@@ -77,7 +83,9 @@ class OrderItemFormSet(BaseInlineFormSet):
                 shop = form.cleaned_data.get('shop')
                 key = (product, shop)
                 if key in seen:
-                    raise ValidationError('Нельзя добавлять несколько позиций с одинаковыми товаром и магазином в одном заказе.')
+                    raise ValidationError(
+                        'It is not allowed to add multiple items with the same product and store in one order.'
+                    )
                 seen.add(key)
 
 
@@ -86,6 +94,7 @@ class OrderItemInline(admin.TabularInline):
     form = OrderItemForm
     formset = OrderItemFormSet
     extra = 1
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -111,11 +120,11 @@ class OrderAdmin(admin.ModelAdmin):
                         )
                     except ProductInfo.DoesNotExist:
                         raise ValidationError(
-                            f'Товар "{item.product}" отсутствует в магазине "{item.shop}".'
+                             f'The product "{item.product}" is not available in the store "{item.shop}".'
                         )
                     if product_info.quantity < item.quantity:
                         raise ValidationError(
-                            f'Недостаточно товара "{item.product}" в магазине "{item.shop}". В наличии: {product_info.quantity}.'
+                            f'Only {product_info.quantity} units of the product "{item.product}" are available in the store "{item.shop}".'
                         )
                     product_info.quantity -= item.quantity
                     product_info.save()

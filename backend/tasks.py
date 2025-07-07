@@ -1,10 +1,8 @@
 import os
-
 import yaml
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
-
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter
 
 

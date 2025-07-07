@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
 from backend.models import Product, Shop, ProductInfo, OrderItem, Order, Contact
-
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -27,12 +25,14 @@ class ShopSerializer(serializers.ModelSerializer):
         model = Shop
         fields = ['id', 'name', 'url']
 
+
 class ProductInfoSerializer(serializers.ModelSerializer):
     shop = ShopSerializer()
 
     class Meta:
         model = ProductInfo
         fields = ['shop', 'price', 'price_rrc', 'quantity']
+
 
 class ProductSerializer(serializers.ModelSerializer):
     product_info = ProductInfoSerializer(many=True)
@@ -56,15 +56,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
             product_info = ProductInfo.objects.get(product=product, shop=shop)
         except ProductInfo.DoesNotExist:
             raise serializers.ValidationError(
-                f'Товар "{product}" отсутствует в магазине "{shop}".'
+                f'The product "{product}" is not available in the store "{shop}".'
             )
 
         if quantity > product_info.quantity:
             raise serializers.ValidationError(
-                f'Недостаточно товара "{product}" в магазине "{shop}". В наличии: {product_info.quantity}.'
+                f'Only {quantity} units of the product "{product}" are available in the store "{shop}".'
             )
-
         return data
+
 
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True)
@@ -88,7 +88,7 @@ class OrderSerializer(serializers.ModelSerializer):
                    item['shop'].id if hasattr(item['shop'], 'id') else item['shop'])
             if key in seen:
                 raise serializers.ValidationError(
-                    'Нельзя добавлять несколько позиций с одинаковыми товаром и магазином в одном заказе.'
+                    'You cannot add multiple items with the same product and store in one order.'
                 )
             seen.add(key)
         return data

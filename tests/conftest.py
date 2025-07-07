@@ -4,8 +4,6 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 from orders.settings import DEFAULT_FROM_EMAIL
 
-pytest_plugins = ("celery.contrib.pytest",)
-
 @pytest.fixture
 def api_client():
     return APIClient()

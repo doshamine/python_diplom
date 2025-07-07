@@ -13,6 +13,7 @@ class Shop(models.Model):
     def __str__(self):
         return self.name
 
+
 class Category(models.Model):
     id = models.BigIntegerField(verbose_name='id', primary_key=True)
     name = models.CharField(max_length=50, verbose_name='name')
@@ -25,6 +26,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Product(models.Model):
     id = models.BigIntegerField(verbose_name='id', primary_key=True)
@@ -41,12 +43,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductInfo(models.Model):
     product = models.ForeignKey(Product, verbose_name='product', related_name='product_info', on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, verbose_name='shop', related_name='product_info', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price')
     price_rrc = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='price_rrc')
     quantity = models.IntegerField(verbose_name='quantity')
+
 
 class Parameter(models.Model):
     name = models.CharField(max_length=50, verbose_name='name', unique=True)
@@ -59,16 +63,19 @@ class Parameter(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductParameter(models.Model):
     product_info = models.ForeignKey(ProductInfo, verbose_name='product_info', related_name='product_parameters', on_delete=models.CASCADE)
     parameter = models.ForeignKey(Parameter, verbose_name='parameter', related_name='product_parameters', on_delete=models.CASCADE)
     value = models.TextField(verbose_name='value')
+
 
 class OrderStatus(models.TextChoices):
     NEW = 'new', 'New'
     PAID = 'paid', 'Paid'
     SHIPPED = 'shipped', 'Shipped'
     CANCELED = 'canceled', 'Canceled'
+
 
 class Order(models.Model):
     user = models.ForeignKey(

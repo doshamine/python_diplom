@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect
-
 from .tasks import send_mail_task
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -10,11 +9,11 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
 from .filters import ProductFilter
 from .models import Product, Order, Contact, OrderStatus, ContactType
 from .serializers import UserSerializer, ProductSerializer, OrderSerializer, ContactSerializer
 from .tasks import do_import
+
 
 @staff_member_required
 def import_view(request):

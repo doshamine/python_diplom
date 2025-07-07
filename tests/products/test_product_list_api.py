@@ -10,7 +10,6 @@ def test_product_list(api_client, product):
     assert response.status_code == 200
     assert len(response.data) >= 1
 
-
 @pytest.mark.django_db
 def test_product_detail(api_client, product):
     url = reverse('products-detail', args=[product.id])
@@ -18,13 +17,11 @@ def test_product_detail(api_client, product):
     assert response.status_code == 200
     assert response.data['id'] == product.id
 
-
 @pytest.mark.django_db
 def test_product_detail_not_found(api_client):
     url = reverse('products-detail', args=[9999])
     response = api_client.get(url)
     assert response.status_code == 404
-
 
 @pytest.mark.django_db
 def test_product_filter_by_price_and_shop(api_client, product):
@@ -42,7 +39,6 @@ def test_product_filter_by_price_and_shop(api_client, product):
     assert response.status_code == 200
     assert all(item['id'] == product2.id for item in response.data)
 
-
 @pytest.mark.django_db
 def test_product_search(api_client, product):
     url = reverse('products-list')
@@ -50,7 +46,6 @@ def test_product_search(api_client, product):
     assert response.status_code == 200
     assert len(response.data) >= 1
     assert product.name in [item['name'] for item in response.data]
-
 
 @pytest.mark.django_db
 def test_product_ordering(api_client, product):

@@ -11,14 +11,12 @@ def test_contact_list_unauthorized(api_client):
     response = api_client.get(url)
     assert response.status_code == 401
 
-
 @pytest.mark.django_db
 def test_contact_list_empty(auth_client):
     url = reverse('contacts-list')
     response = auth_client.get(url)
     assert response.status_code == 200
     assert response.data == []
-
 
 @pytest.mark.django_db
 def test_contact_create(auth_client):
@@ -34,14 +32,12 @@ def test_contact_create(auth_client):
     assert contact.type == ContactType.EMAIL
     assert contact.value == 'example@mail.com'
 
-
 @pytest.mark.django_db
 def test_contact_create_unauthorized(api_client):
     url = reverse('contacts-list')
     data = {'type': ContactType.TELEGRAM, 'value': 'bot'}
     response = api_client.post(url, data)
     assert response.status_code == 401
-
 
 @pytest.mark.django_db
 def test_contact_list_only_own(auth_client, user):
@@ -53,7 +49,6 @@ def test_contact_list_only_own(auth_client, user):
     assert len(response.data) == 1
     assert response.data[0]['id'] == contact1.id
 
-
 @pytest.mark.django_db
 def test_contact_update(auth_client, user):
     contact = baker.make('backend.Contact', user=user, type=ContactType.PHONE)
@@ -64,7 +59,6 @@ def test_contact_update(auth_client, user):
     contact.refresh_from_db()
     assert contact.type == ContactType.TELEGRAM
 
-
 @pytest.mark.django_db
 def test_contact_delete(auth_client, user):
     contact = baker.make('backend.Contact', user=user, type='phone', value=ContactType.PHONE)
@@ -73,14 +67,12 @@ def test_contact_delete(auth_client, user):
     assert response.status_code == 204
     assert Contact.objects.count() == 0
 
-
 @pytest.mark.django_db
 def test_contact_delete_not_owned(auth_client):
     contact = baker.make('backend.Contact', type=ContactType.PHONE)
     url = reverse('contacts-detail', args=[contact.id])
     response = auth_client.delete(url)
     assert response.status_code == 404
-
 
 @pytest.mark.django_db
 def test_contact_create_invalid(auth_client):

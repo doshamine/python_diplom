@@ -19,7 +19,6 @@ def test_confirm_order_success(auth_client, user):
     assert response.data['message'] == 'Order confirmed successfully.'
     assert order.status == OrderStatus.PAID
 
-
 @pytest.mark.django_db
 def test_confirm_order_not_owned(auth_client):
     other_user_order = baker.make(Order, status=OrderStatus.NEW)
@@ -33,7 +32,6 @@ def test_confirm_order_not_owned(auth_client):
     assert response.status_code == 404
     assert response.data['error'] == 'Order not found.'
 
-
 @pytest.mark.django_db
 def test_confirm_order_wrong_status(auth_client, user):
     order = baker.make(Order, user=user, status=OrderStatus.PAID)
@@ -46,7 +44,6 @@ def test_confirm_order_wrong_status(auth_client, user):
 
     assert response.status_code == 400
     assert response.data['error'] == 'Only new orders can be confirmed.'
-
 
 @pytest.mark.django_db
 def test_confirm_order_contact_not_found(auth_client, user):
