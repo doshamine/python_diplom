@@ -285,7 +285,7 @@ Content-Type: application/json
 ##### Запрос
 
 ```
-POST http://localhost:8000/api/v1/products/4216292
+POST http://localhost:8000/api/v1/products/4216292/
 Content-Type: application/json
 ```
 
@@ -316,7 +316,7 @@ Content-Type: application/json
 ##### Запрос
 
 ```
-POST http://localhost:8000/api/v1/products/421629
+POST http://localhost:8000/api/v1/products/421629/
 Content-Type: application/json
 ```
 
@@ -336,7 +336,7 @@ Content-Type: application/json
 
 | Поле        | Тип      | Обязательный | Описание                                                 |
 |-------------|----------|--------------|----------------------------------------------------------|
-| status      | string   | да           | Статус заказа (`new`, `paid`, `shipped` или `canceled`)  |
+| status      | string   | нет          | Статус заказа (`new` (по умолчанию), `paid`, `shipped` или `canceled`)  |
 | order_items | массив   | да           | Список позиций заказа                                    |
 | order_items[].product | int | да      | ID продукта                                              |
 | order_items[].shop    | int | да      | ID магазина                                              |
@@ -348,10 +348,10 @@ Content-Type: application/json
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/orders/
 Authorization: Token <your_token>
 
-```
 {
   "order_items": [
     {
@@ -397,10 +397,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/orders/
 Authorization: Token <your_token>
 
-```
 {
   "order_items": [
     {
@@ -435,9 +435,9 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/orders/
 
-```
 {
   "order_items": [
     {
@@ -472,8 +472,10 @@ POST http://localhost:8000/api/v1/orders/
 
 ##### Запрос
 
+```
 GET http://localhost:8000/api/v1/orders/
 Authorization: Token <your_token>
+```
 
 ##### Ответ
 
@@ -506,7 +508,9 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 GET http://localhost:8000/api/v1/orders/
+```
 
 ##### Ответ
 
@@ -533,7 +537,7 @@ GET http://localhost:8000/api/v1/orders/
 ##### Запрос
 
 ```
-GET http://localhost:8000/api/v1/orders/1
+GET http://localhost:8000/api/v1/orders/1/
 Authorization: Token <your_token>
 ```
 
@@ -604,11 +608,11 @@ Authorization: Token <your_token>
 | Поле        | Тип      | Обязательный | Описание                                                 |
 |-------------|----------|--------------|----------------------------------------------------------|
 | order_id    | int      | да           | id заказа в базе                                         |
-| status      | string   | да           | Статус заказа (`new`, `paid`, `shipped` или `canceled`)  |
-| order_items | массив   | да           | Список позиций заказа                                    |
-| order_items[].product | int | да      | ID продукта                                              |
-| order_items[].shop    | int | да      | ID магазина                                              |
-| order_items[].quantity| int | да      | Количество                                               |
+| status      | string   | нет          | Статус заказа (`new`, `paid`, `shipped` или `canceled`)  |
+| order_items | массив   | нет          | Список позиций заказа                                    |
+| order_items[].product | int | нет     | ID продукта                                              |
+| order_items[].shop    | int | нет     | ID магазина                                              |
+| order_items[].quantity| int | нет     | Количество                                               |
 
 ### Примеры возможных запросов и ответов
 
@@ -796,7 +800,7 @@ Authorization: Token <your_token>
 
 ## DELETE `/cart/{order_id}/`
 
-Удалить заказ из корзины пользователя по его id. Обработка запросов аналогична DELETE `/cart/{order_id}/`. Все заказы в корзине имеют статус "new".
+Удалить заказ из корзины пользователя по его id. Обработка запросов аналогична DELETE `/orders/{order_id}/`. Все заказы в корзине имеют статус "new".
 
 ## POST `/contacts/`
 
@@ -815,10 +819,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/contacts/
 Authorization: Token <your_token>
 
-```
 {
   "type": "telegram",
   "value": "doshamine"
@@ -839,10 +843,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/contacts/
 Authorization: Token <your_token>
 
-```
 {
   "type": "vk",
   "value": "doshamine"
@@ -863,9 +867,9 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/contacts/
 
-```
 {
   "type": "telegram",
   "value": "doshamine"
@@ -914,7 +918,9 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 GET http://localhost:8000/api/v1/contacts/
+```
 
 ##### Ответ
 
@@ -941,7 +947,7 @@ GET http://localhost:8000/api/v1/contacts/
 ##### Запрос
 
 ```
-GET http://localhost:8000/api/v1/contacts/1
+GET http://localhost:8000/api/v1/contacts/1/
 Authorization: Token <your_token>
 ```
 
@@ -960,7 +966,7 @@ Authorization: Token <your_token>
 ##### Запрос
 
 ```
-GET http://localhost:8000/api/v1/contacts/1
+GET http://localhost:8000/api/v1/contacts/1/
 ```
 
 ##### Ответ
@@ -976,7 +982,7 @@ GET http://localhost:8000/api/v1/contacts/1
 ##### Запрос
 
 ```
-GET http://localhost:8000/api/v1/contacts/3
+GET http://localhost:8000/api/v1/contacts/3/
 Authorization: Token <your_token>
 ```
 
@@ -984,7 +990,7 @@ Authorization: Token <your_token>
 
 ```
 {
-  "detail": "No Order matches the given query."
+  "detail": "No Contact matches the given query."
 }
 ```
 
@@ -1031,10 +1037,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 PATCH http://localhost:8000/api/v1/contacts/2/
 Content-Type: application/json
 
-```
 {
   "type": "phon",
   "value": "666"
@@ -1077,11 +1083,11 @@ Content-Type: application/json
 
 ##### Запрос
 
+```
 PATCH http://localhost:8000/api/v1/orders/3/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
-```
 {
   "type": "phone",
   "value": "666"
@@ -1112,8 +1118,10 @@ Authorization: Token {{TOKEN}}
 
 ##### Запрос
 
+```
 DELETE http://localhost:8000/api/v1/contacts/1/
 Authorization: Token <your_token>
+```
 
 ##### Ответ
 
@@ -1125,8 +1133,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 DELETE http://localhost:8000/api/v1/contacts/1/
 Authorization: Token <your_token>
+```
 
 ##### Ответ
 
@@ -1140,8 +1150,10 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 DELETE http://localhost:8000/api/v1/contacts/1/
 Authorization: Token <your_token>
+```
 
 ##### Ответ
 
@@ -1168,11 +1180,11 @@ Authorization: Token <your_token>
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/confirm/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
-```
 {
   "order_id": 1,
   "contact_id": 1
@@ -1191,11 +1203,11 @@ Authorization: Token {{TOKEN}}
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/confirm/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
-```
 {
   "order_id": 1,
   "contact_id": 1
@@ -1215,10 +1227,10 @@ Authorization: Token {{TOKEN}}
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/confirm/
 Content-Type: application/json
 
-```
 {
   "order_id": 1,
   "contact_id": 1
@@ -1237,10 +1249,10 @@ Content-Type: application/json
 
 ##### Запрос
 
+```
 POST http://localhost:8000/api/v1/confirm/
 Content-Type: application/json
 
-```
 {
   "order_id": 3,
   "contact_id": 1
