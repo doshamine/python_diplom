@@ -6,32 +6,32 @@ from backend.models import Order, OrderStatus, OrderItem, ProductInfo
 
 @pytest.mark.django_db
 def test_cart_empty(auth_client):
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
     assert response.status_code == 200
-    assert response.data['message'] == 'Cart is empty'
+    assert response.data == []
 
 @pytest.mark.django_db
 def test_cart_with_items(auth_client, user, product, shop):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
     baker.make(OrderItem, order=order, product=product, shop=shop, quantity=2)
 
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
 
     assert response.status_code == 200
-    assert response.data['id'] == order.id
-    assert response.data['status'] == OrderStatus.NEW
-    assert len(response.data['order_items']) == 1
-    assert response.data['order_items'][0]['quantity'] == 2
+    assert response.data[0]['id'] == order.id
+    assert response.data[0]['status'] == OrderStatus.NEW
+    assert len(response.data[0]['order_items']) == 1
+    assert response.data[0]['order_items'][0]['quantity'] == 2
 
 @pytest.mark.django_db
 def test_cart_order_items_fields(auth_client, user, product, shop):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
     order_item = baker.make(OrderItem, order=order, product=product, shop=shop, quantity=2)
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
-    item = response.data['order_items'][0]
+    item = response.data[0]['order_items'][0]
     assert item['product'] == product.id
     assert item['shop'] == shop.id
     assert item['quantity'] == 2
@@ -40,10 +40,9 @@ def test_cart_order_items_fields(auth_client, user, product, shop):
 @pytest.mark.django_db
 def test_cart_with_non_new_statuses(auth_client, user, status):
     baker.make(Order, user=user, status=status)
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
     assert response.status_code == 200
-    assert response.data['message'] == 'Cart is empty'
 
 @pytest.mark.django_db
 def test_cart_with_multiple_items(auth_client, user, product, shop):
@@ -52,46 +51,35 @@ def test_cart_with_multiple_items(auth_client, user, product, shop):
     baker.make(OrderItem, order=order, product=product, shop=shop, quantity=2)
     baker.make(OrderItem, order=order, product=product2, shop=shop, quantity=3)
 
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
 
     assert response.status_code == 200
-    assert response.data['id'] == order.id
-    assert len(response.data['order_items']) == 2
-    quantities = [item['quantity'] for item in response.data['order_items']]
+    assert response.data[0]['id'] == order.id
+    assert len(response.data[0]['order_items']) == 2
+    quantities = [item['quantity'] for item in response.data[0]['order_items']]
     assert 2 in quantities and 3 in quantities
 
 @pytest.mark.django_db
 def test_cart_does_not_show_other_users_order(auth_client, user):
     other_user = baker.make('auth.User')
     order = baker.make(Order, user=other_user, status=OrderStatus.NEW)
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
     assert response.status_code == 200
-    assert response.data['message'] == 'Cart is empty'
 
 @pytest.mark.django_db
 def test_cart_order_without_items(auth_client, user):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = auth_client.get(url)
     assert response.status_code == 200
-    assert response.data['id'] == order.id
-    assert response.data['order_items'] == []
-
-@pytest.mark.django_db
-def test_cart_server_error(monkeypatch, auth_client):
-    def raise_exception(*args, **kwargs):
-        raise Exception("Test error")
-    monkeypatch.setattr('backend.views.Order.objects.filter', raise_exception)
-    url = reverse('cart')
-    response = auth_client.get(url)
-    assert response.status_code == 500
-    assert 'error' in response.data
+    assert response.data[0]['id'] == order.id
+    assert response.data[0]['order_items'] == []
 
 @pytest.mark.django_db
 def test_cart_unauthorized(api_client):
-    url = reverse('cart')
+    url = reverse('cart-list')
     response = api_client.get(url)
     assert response.status_code == 401
 

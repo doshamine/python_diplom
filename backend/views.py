@@ -63,6 +63,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
+class CartViewSet(OrderViewSet):
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user, status=OrderStatus.NEW)
+
+
 class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
     permission_classes = [IsAuthenticated]
@@ -78,20 +83,6 @@ class ContactViewSet(viewsets.ModelViewSet):
                 message=f'Ваш адрес "{contact.value}" был успешно добавлен.',
                 recipient_list=[contact.user.email],
             )
-
-
-class CartAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        try:
-            order = Order.objects.filter(user=request.user, status=OrderStatus.NEW).first()
-            if not order:
-                return Response({'message': 'Cart is empty'}, status=200)
-            serializer = OrderSerializer(order)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class OrderConfirmAPIView(APIView):

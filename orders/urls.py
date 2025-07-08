@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
-from backend.views import RegisterView, ProductViewSet, OrderViewSet, ContactViewSet, OrderConfirmAPIView, CartAPIView, \
-    import_view
+from backend.views import RegisterView, ProductViewSet, OrderViewSet, ContactViewSet, OrderConfirmAPIView, \
+    import_view, CartViewSet
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='products')
 router.register(r'orders', OrderViewSet, basename='orders')
+router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'contacts', ContactViewSet, basename='contacts')
 
 urlpatterns = [
@@ -32,7 +33,6 @@ urlpatterns = [
     path('api/v1/register/', RegisterView.as_view(), name='register'),
     path('api/v1/login/', obtain_auth_token, name='login'),
     path('api/v1/confirm/', OrderConfirmAPIView.as_view(), name='confirm'),
-    path('api/v1/cart/', CartAPIView.as_view(), name='cart'),
     path('_nested_admin/', include('nested_admin.urls')),
     path('api/v1/', include(router.urls))
 ]

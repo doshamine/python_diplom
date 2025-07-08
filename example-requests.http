@@ -1,5 +1,5 @@
 @BASE_URL = http://localhost:8000/api/v1
-@TOKEN = 6276731a2d476223b786bc92846a640cecd39319
+@TOKEN = 92ab967bef2423c09f2ddf50ed6cd97ae1754bef
 
 
 POST {{BASE_URL}}/register/
@@ -31,18 +31,18 @@ Authorization: Token {{TOKEN}}
 
 ###
 
-DELETE {{BASE_URL}}/orders/1/
+GET {{BASE_URL}}/orders/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
 ###
 
-PATCH {{BASE_URL}}/orders/1/
+PATCH {{BASE_URL}}/cart/1/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
 {
-  "status": "cancelled"
+  "status": "canceled"
 }
 
 ###
@@ -68,24 +68,19 @@ Authorization: Token {{TOKEN}}
 
 ###
 
-POST {{BASE_URL}}/contacts/
+GET {{BASE_URL}}/contacts/1
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
-
-{
-  "type": "telegram",
-  "value": "doshamine"
-}
 
 ###
 
-POST {{BASE_URL}}/contacts/
+PATCH {{BASE_URL}}/contacts/2/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
 {
-  "type": "address",
-  "value": "world"
+  "type": "phone",
+  "value": "666"
 }
 
 ###
@@ -95,7 +90,7 @@ Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
 {
-  "order_id": 1,
+  "order_id": 3,
   "contact_id": 1
 }
 
