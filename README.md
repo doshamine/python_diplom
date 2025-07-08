@@ -2,7 +2,7 @@
 
 ## POST `/register/`
 
-Регистрирует нового пользователя в системе.
+Регистрирует нового пользователя в системе. При успешной регистрации на электронную почту пользователя отправляется письмо с подтверждением.
 
 ### Параметры запроса
 
@@ -11,7 +11,7 @@
 | username     | string  | да           | Уникальное имя пользователя|
 | first_name   | string  | нет          | Имя                        |
 | last_name    | string  | нет          | Фамилия                    |
-| email        | string  | нет          | Электронная почта          |
+| email        | string  | да           | Электронная почта          |
 | password     | string  | да           | Пароль пользователя        |
 
 ### Примеры возможных запросов и ответов
@@ -597,7 +597,7 @@ Authorization: Token <your_token>
 
 ## PATCH `/orders/{order_id}/`
 
-Обновить статус заказа пользователя.
+Обновить заказ пользователя.
 
 ### Параметры запроса
 
@@ -778,3 +778,479 @@ Authorization: Token <your_token>
 }
 ```
 
+## POST `/cart/`
+
+Добавить товары в корзину. Обработка запросов аналогична POST `/orders/`. Все заказы в корзине имеют статус "new".
+
+## GET `/cart/`
+
+Получить список заказов в корзине текущего пользователя. Обработка запросов аналогична GET `/orders/`. Все заказы в корзине имеют статус "new".
+
+## GET `/cart/{order_id}/`
+
+Получить заказ из корзины пользователя по его id. Обработка запросов аналогична GET `/orders/{order_id}/`. Все заказы в корзине имеют статус "new".
+
+## PATCH `/cart/{order_id}/`
+
+Обновить заказ в корзине пользователя. Обработка запросов аналогична PATCH `/orders/{order_id}/`. Все заказы в корзине имеют статус "new".
+
+## DELETE `/cart/{order_id}/`
+
+Удалить заказ из корзины пользователя по его id. Обработка запросов аналогична DELETE `/cart/{order_id}/`. Все заказы в корзине имеют статус "new".
+
+## POST `/contacts/`
+
+Добавить контакт пользователя. При добавлении адреса доставки на электронную почту пользователя отправляется письмо с подтверждением.
+
+### Параметры запроса
+
+| Поле        | Тип      | Обязательный | Описание                                                   |
+|-------------|----------|--------------|------------------------------------------------------------|
+| type        | string   | да           | Тип контакта (`address`, `email`, `phone` или `telegram`)  |
+| value       | string   | да           | Контакт пользователя                                       |
+
+### Примеры возможных запросов и ответов
+
+#### 201 Created
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/contacts/
+Authorization: Token <your_token>
+
+```
+{
+  "type": "telegram",
+  "value": "doshamine"
+}
+```
+
+##### Ответ
+
+```
+{
+  "id": 1,
+  "type": "telegram",
+  "value": "doshamine"
+}
+```
+
+#### 400 Bad Request
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/contacts/
+Authorization: Token <your_token>
+
+```
+{
+  "type": "vk",
+  "value": "doshamine"
+}
+```
+
+##### Ответ
+
+```
+{
+  "type": [
+    "\"vk\" is not a valid choice."
+  ]
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/contacts/
+
+```
+{
+  "type": "telegram",
+  "value": "doshamine"
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+## GET `/contacts/`
+
+Получить список контактов пользователя.
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+GET http://localhost:8000/api/v1/contacts/
+Authorization: Token <your_token>
+
+##### Ответ
+
+```
+[
+  {
+    "id": 2,
+    "type": "phone",
+    "value": "777"
+  },
+  {
+    "id": 1,
+    "type": "telegram",
+    "value": "doshamine"
+  }
+]
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+GET http://localhost:8000/api/v1/contacts/
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+## GET `/contacts/{contact_id}/`
+
+Получить заказ из корзины пользователя по его id.
+
+### Параметры запроса
+
+| Параметр   | Тип    | Описание                                        |
+|------------|--------|-------------------------------------------------|
+| contact_id | int    | id контакта в базе                              |
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/contacts/1
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "id": 1,
+  "type": "telegram",
+  "value": "doshamine"
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/contacts/1
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+```
+GET http://localhost:8000/api/v1/contacts/3
+Authorization: Token <your_token>
+```
+
+##### Ответ
+
+```
+{
+  "detail": "No Order matches the given query."
+}
+```
+
+## PATCH `/contacts/{contact_id}/`
+
+Обновить контакт пользователя.
+
+### Параметры запроса
+
+| Поле        | Тип      | Обязательный | Описание                                                   |
+|-------------|----------|--------------|------------------------------------------------------------|
+| contact_id  | int      | да           | id контакта в базе                                         |
+| type        | string   | да           | Тип контакта (`address`, `email`, `phone` или `telegram`)  |
+| value       | string   | да           | Контакт пользователя                                       |
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+```
+PATCH http://localhost:8000/api/v1/contacts/2/
+Content-Type: application/json
+Authorization: Token <your_token>
+
+{
+  "type": "phone",
+  "value": "666"
+}
+```
+
+##### Ответ
+
+```
+{
+  "id": 2,
+  "type": "phone",
+  "value": "666"
+}
+```
+
+#### 400 Bad Request
+
+##### Запрос
+
+PATCH http://localhost:8000/api/v1/contacts/2/
+Content-Type: application/json
+
+```
+{
+  "type": "phon",
+  "value": "666"
+}
+```
+
+##### Ответ
+
+```
+{
+  "type": [
+    "\"phon\" is not a valid choice."
+  ]
+}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+PATCH http://localhost:8000/api/v1/contacts/2/
+Content-Type: application/json
+
+```
+{
+  "type": "phone",
+  "value": "666"
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+PATCH http://localhost:8000/api/v1/orders/3/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+```
+{
+  "type": "phone",
+  "value": "666"
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "No Contact matches the given query."
+}
+```
+
+## DELETE `/contacts/{contact_id}/`
+
+Удалить контакт пользователя.
+
+### Параметры запроса
+
+| Параметр   | Тип    | Описание                                        |
+|------------|--------|-------------------------------------------------|
+| contact_id | int    | id контакта в базе                              |
+
+### Примеры возможных запросов и ответов
+
+#### 204 No Content
+
+##### Запрос
+
+DELETE http://localhost:8000/api/v1/contacts/1/
+Authorization: Token <your_token>
+
+##### Ответ
+
+```
+{}
+```
+
+#### 401 Unauthorized
+
+##### Запрос
+
+DELETE http://localhost:8000/api/v1/contacts/1/
+Authorization: Token <your_token>
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+DELETE http://localhost:8000/api/v1/contacts/1/
+Authorization: Token <your_token>
+
+##### Ответ
+
+```
+{
+  "detail": "No Contact matches the given query."
+}
+```
+
+## POST `/confirm/`
+
+Подтвердить заказ пользователя.
+
+### Параметры запроса
+
+| Поле        | Тип      | Обязательный | Описание                                                   |
+|-------------|----------|--------------|------------------------------------------------------------|
+| order_id    | int      | да           | id заказа                                                  |
+| contact_id  | int      | да           | id контакта пользователя                                   |
+
+### Примеры возможных запросов и ответов
+
+#### 200 OK
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/confirm/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+```
+{
+  "order_id": 1,
+  "contact_id": 1
+}
+```
+
+##### Ответ
+
+```
+{
+  "message": "Order confirmed successfully."
+}
+```
+
+#### 400 Bad Request
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/confirm/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+```
+{
+  "order_id": 1,
+  "contact_id": 1
+}
+```
+
+##### Ответ
+
+```
+{
+  "error": "Only new orders can be confirmed."
+}
+```
+
+
+#### 401 Unauthorized
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/confirm/
+Content-Type: application/json
+
+```
+{
+  "order_id": 1,
+  "contact_id": 1
+}
+```
+
+##### Ответ
+
+```
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### 404 Not Found
+
+##### Запрос
+
+POST http://localhost:8000/api/v1/confirm/
+Content-Type: application/json
+
+```
+{
+  "order_id": 3,
+  "contact_id": 1
+}
+```
+
+##### Ответ
+
+```
+{
+  "error": "Order not found."
+}
+```
