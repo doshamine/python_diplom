@@ -1,5 +1,5 @@
 @BASE_URL = http://localhost:8000/api/v1
-@TOKEN = 92ab967bef2423c09f2ddf50ed6cd97ae1754bef
+@TOKEN = <your-token>
 
 
 POST {{BASE_URL}}/register/
@@ -9,7 +9,7 @@ Content-Type: application/json
   "username": "doshamine",
   "first_name": "Иван",
   "last_name": "Иванов",
-  "email": "doshamine@gmail.com",
+  "email": "example@gmail.com",
   "password": "123"
 }
 
@@ -47,6 +47,16 @@ Authorization: Token {{TOKEN}}
 
 ###
 
+PATCH {{BASE_URL}}/order/1/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+{
+  "status": "new"
+}
+
+###
+
 POST {{BASE_URL}}/orders/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
@@ -74,6 +84,17 @@ Authorization: Token {{TOKEN}}
 
 ###
 
+POST {{BASE_URL}}/contacts/
+Content-Type: application/json
+Authorization: Token {{TOKEN}}
+
+{
+  "type": "address",
+  "value": "Omsk"
+}
+
+###
+
 PATCH {{BASE_URL}}/contacts/2/
 Content-Type: application/json
 Authorization: Token {{TOKEN}}
@@ -90,7 +111,7 @@ Content-Type: application/json
 Authorization: Token {{TOKEN}}
 
 {
-  "order_id": 3,
+  "order_id": 2,
   "contact_id": 1
 }
 

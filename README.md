@@ -1,4 +1,4 @@
-# Orders API
+# API для работы с заказами
 
 ## POST `/register/`
 
@@ -25,11 +25,11 @@ POST http://localhost:8000/api/v1/register/
 Content-Type: application/json
 
 {
-"username": "newuser",
-"first_name": "John",
-"last_name": "Doe",
-"email": "john@example.com",
-"password": "secret123"
+  "username": "newuser",
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john@example.com",
+  "password": "secret123"
 }
 ```
 
@@ -50,11 +50,11 @@ POST http://localhost:8000/api/v1/register/
 Content-Type: application/json
 
 {
-"username": "newuser",
-"first_name": "Johny",
-"last_name": "Do",
-"email": "joh@example.com",
-"password": "123"
+  "username": "newuser",
+  "first_name": "Johny",
+  "last_name": "Do",
+  "email": "joh@example.com",
+  "password": "123"
 }
 ```
 
@@ -77,11 +77,11 @@ POST http://localhost:8000/api/v1/register/
 Content-Type: application/json
 
 {
-"username": "",
-"first_name": "Johny",
-"last_name": "Do",
-"email": "joh@example.com",
-"password": "123"
+  "username": "",
+  "first_name": "Johny",
+  "last_name": "Do",
+  "email": "joh@example.com",
+  "password": "123"
 }
 ```
 
@@ -104,10 +104,10 @@ POST http://localhost:8000/api/v1/register/
 Content-Type: application/json
 
 {
-"username": "newuser",
-"first_name": "Jojo",
-"last_name": "Dodo",
-"email": "jk@example.com",
+  "username": "newuser",
+  "first_name": "Jojo",
+  "last_name": "Dodo",
+  "email": "jk@example.com",
 }
 ```
 
@@ -134,28 +134,6 @@ Content-Type: application/json
 
 ### Примеры возможных запросов и ответов
 
-#### 201 Created
-
-##### Запрос
-
-```
-POST http://localhost:8000/api/v1/login/
-Content-Type: application/json
-
-{
-"username": "newuser",
-"password": "secret123"
-}
-```
-
-##### Ответ
-
-```
-{
-  "token": "fa073f4f2562c5123f4d1a83eeee509f60d62a47"
-}
-```
-
 #### 200 OK
 
 ##### Запрос
@@ -165,8 +143,8 @@ POST http://localhost:8000/api/v1/login/
 Content-Type: application/json
 
 {
-"username": "newuser",
-"password": "123"
+  "username": "newuser",
+  "password": "123"
 }
 ```
 
@@ -187,8 +165,8 @@ POST http://localhost:8000/api/v1/login/
 Content-Type: application/json
 
 {
-"username": "newuser",
-"password": "12"
+  "username": "newuser",
+  "password": "12"
 }
 ```
 
@@ -894,8 +872,10 @@ POST http://localhost:8000/api/v1/contacts/
 
 ##### Запрос
 
+```
 GET http://localhost:8000/api/v1/contacts/
 Authorization: Token <your_token>
+```
 
 ##### Ответ
 
@@ -1086,7 +1066,7 @@ Content-Type: application/json
 ```
 PATCH http://localhost:8000/api/v1/orders/3/
 Content-Type: application/json
-Authorization: Token {{TOKEN}}
+Authorization: Token <your_token>
 
 {
   "type": "phone",
@@ -1135,7 +1115,6 @@ Authorization: Token <your_token>
 
 ```
 DELETE http://localhost:8000/api/v1/contacts/1/
-Authorization: Token <your_token>
 ```
 
 ##### Ответ

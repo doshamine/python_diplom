@@ -48,7 +48,7 @@ def test_order_create_invalid(auth_client, product, shop):
     }
     response = auth_client.post(url, payload, format='json')
     assert response.status_code == 400
-    assert 'product' in response.data.get('order_items', [{}])[0]
+    assert 'product' in response.data.get('order_items')[0]
 
 @pytest.mark.django_db
 def test_order_retrieve(auth_client, user, product, shop):
@@ -96,15 +96,15 @@ def test_order_create_unauthorized(api_client, product, shop):
 
 @pytest.mark.django_db
 def test_order_list_only_own(auth_client, user, product, shop):
-    order1 = Order.objects.create(user=user, status=OrderStatus.PAID)
-    OrderItem.objects.create(order=order1, product=product, shop=shop, quantity=1)
+    order = Order.objects.create(user=user, status=OrderStatus.PAID)
+    OrderItem.objects.create(order=order, product=product, shop=shop, quantity=1)
 
     other_user = baker.make('auth.User')
     Order.objects.create(user=other_user, status=OrderStatus.PAID)
     response = auth_client.get(reverse('orders-list'))
     assert response.status_code == 200
     assert len(response.data) == 1
-    assert response.data[0]['id'] == order1.id
+    assert response.data[0]['id'] == order.id
 
 @pytest.mark.django_db
 def test_order_delete_not_owned(auth_client, user, product, shop):

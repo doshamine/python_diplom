@@ -86,7 +86,7 @@ def test_confirm_order_order_not_found(auth_client, user):
 @pytest.mark.django_db
 def test_confirm_order_contact_not_owned(auth_client, user):
     order = baker.make(Order, user=user, status=OrderStatus.NEW)
-    other_contact = baker.make(Contact)  # контакт другого пользователя
+    other_contact = baker.make(Contact)
     response = auth_client.post(reverse('confirm'), {
         'order_id': order.id,
         'contact_id': other_contact.id

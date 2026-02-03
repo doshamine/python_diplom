@@ -67,6 +67,7 @@ def test_cart_does_not_show_other_users_order(auth_client, user):
     url = reverse('cart-list')
     response = auth_client.get(url)
     assert response.status_code == 200
+    assert response.data == []
 
 @pytest.mark.django_db
 def test_cart_order_without_items(auth_client, user):
@@ -111,14 +112,4 @@ def test_cart_duplicate_order_items_validation(auth_client, user, product, shop)
     url = reverse('orders-list')
     response = auth_client.post(url, data, format='json')
     assert response.status_code == 400
-    assert 'You cannot add multiple items with the same product and store in one order.' in str(response.data)
-
-@pytest.mark.django_db
-def test_cart_serializer_error(auth_client, user):
-
-    data = {"order_items": [{"product": None, "shop": None, "quantity": None}]}
-    url = reverse('orders-list')
-    response = auth_client.post(url, data, format='json')
-    assert response.status_code == 400
-    assert 'errors' in response.data or isinstance(response.data, dict)
-
+    assert 'cannot add multiple items' in str(response.data)

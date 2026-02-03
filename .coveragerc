@@ -4,4 +4,4 @@ omit =
     */__init__.py
 
 [report]
-term-missing = true
+show_missing = true

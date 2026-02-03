@@ -1,5 +1,4 @@
 import pytest
-from django.core import mail
 from django.urls import reverse
 from model_bakery import baker
 from backend.models import Contact, ContactType
@@ -41,13 +40,13 @@ def test_contact_create_unauthorized(api_client):
 
 @pytest.mark.django_db
 def test_contact_list_only_own(auth_client, user):
-    contact1 = baker.make('backend.Contact', user=user, type=ContactType.TELEGRAM)
+    contact = baker.make('backend.Contact', user=user, type=ContactType.TELEGRAM)
     baker.make('backend.Contact', type=ContactType.PHONE)
     url = reverse('contacts-list')
     response = auth_client.get(url)
     assert response.status_code == 200
     assert len(response.data) == 1
-    assert response.data[0]['id'] == contact1.id
+    assert response.data[0]['id'] == contact.id
 
 @pytest.mark.django_db
 def test_contact_update(auth_client, user):

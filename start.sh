@@ -12,5 +12,5 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-#python3 manage.py import
+python3 manage.py import
 python3 manage.py runserver 0.0.0.0:8000
